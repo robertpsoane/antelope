@@ -14,12 +14,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from .views import default_api, CodingSessionsView, TurnsView, CodingClassesView, CodingsView
+from .views import default_api, CodingSessionsListView, TurnsListView
+from .views import (CodingClassesListView, CodingsListView, 
+    CodingSessionsInstanceView, TurnsInstanceView, CodingClassesInstanceView,
+    CodingsInstanceView, UserList, UserDetail, user_login, user_logout,
+    get_login_data)
 
 urlpatterns = [
-    path('sessions', CodingSessionsView.as_view()),
-    path('turns', TurnsView.as_view()),
-    path('coding_classes', CodingClassesView.as_view()),
-    path('codings', CodingsView.as_view()),
+    path('sessions/', CodingSessionsListView.as_view()),
+    path('turns/', TurnsListView.as_view()),
+    path('coding_classes/', CodingClassesListView.as_view()),
+    path('codings/', CodingsListView.as_view()),
+    path('sessions/<int:pk>/', CodingSessionsInstanceView.as_view()),
+    path('turns/<int:pk>/', TurnsInstanceView.as_view()),
+    path('coding_classes/<int:pk>/', CodingClassesInstanceView.as_view()),
+    path('codings/<int:pk>/', CodingsInstanceView.as_view()),
+    path('users/', UserList.as_view()),
+    path('users/<int:pk>/', UserDetail.as_view()),
+    path('auth/', user_login),
+    path('auth_logout/', user_logout),
+    path('auth_check/', get_login_data),
     path('', default_api)
 ]

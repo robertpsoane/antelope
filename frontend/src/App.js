@@ -8,11 +8,12 @@ import {
 } from "react-router-dom";
 
 // Components
-import Header from "./components/Header.js";
+import MainNavbar from "./components/navbars/MainNavbar.js";
+import LoginNavbar from "./components/navbars/LoginNavbar.js";
 
 // Pages
 import Login from "./pages/Login.js";
-import AdminPanel from "./pages/AdminPanel.js";
+import CodingSchema from "./pages/CodingSchema.js";
 import SessionCoder from "./pages/SessionCoder.js";
 import TranscriptManager from "./pages/TranscriptManager.js";
 import UserSettings from "./pages/UserSettings.js";
@@ -25,30 +26,51 @@ class App extends Component {
   render() {
     return (
       <div>
-        <div id="header">
-          <Header />
-        </div>
-        <div id="page">
-          <Router>
-            <Switch>
-              <Route path="/transcripts">
-                <TranscriptManager />
-              </Route>
-              <Route path="/coder">
+        {/* Switch on url path, display relevant page based on path */}
+        <Router>
+          <Switch>
+            <Route exact path="/coder">
+              <div id="nav">
+                <MainNavbar page="none" />
+              </div>
+              <div id="page">
                 <SessionCoder />
-              </Route>
-              <Route path="/settings">
+              </div>
+            </Route>
+            <Route exact path="/settings">
+              <div id="nav">
+                <MainNavbar page="settings" />
+              </div>
+              <div id="page">
                 <UserSettings />
-              </Route>
-              <Route path="/settings/admin">
-                <AdminPanel />
-              </Route>
-              <Route path="/">
+              </div>
+            </Route>
+            <Route exact path="/coding_schema">
+              <div id="nav">
+                <MainNavbar page="schema" />
+              </div>
+              <div id="page">
+                <CodingSchema />
+              </div>
+            </Route>
+            <Route exact path="/login">
+              <div id="nav">
+                <LoginNavbar />
+              </div>
+              <div id="page">
                 <Login />
-              </Route>
-            </Switch>
-          </Router>
-        </div>
+              </div>
+            </Route>
+            <Route exact path="/">
+              <div id="nav">
+                <MainNavbar page="transcripts" />
+              </div>
+              <div id="page">
+                <TranscriptManager />
+              </div>
+            </Route>
+          </Switch>
+        </Router>
       </div>
     );
   }

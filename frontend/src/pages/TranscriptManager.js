@@ -3,7 +3,7 @@ import React, { Component } from "react";
 class TranscriptManager extends Component {
   state = {};
   render() {
-    return <div>TranscriptManager</div>;
+    return <h1>Transcripts Page</h1>;
   }
 }
 

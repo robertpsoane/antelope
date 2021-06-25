@@ -4,7 +4,7 @@ from django.db.models.deletion import CASCADE
 
 # Create your models here.
 class CodingSessions(models.Model):
-    UserID = models.ForeignKey(User, on_delete=CASCADE)
+    UserID = models.ForeignKey(User, on_delete=CASCADE, related_name="user_sessions")
     SessionName = models.CharField(max_length=100, default="")
     Notes = models.CharField(max_length=500)
     UploadDate = models.DateField(auto_now_add=True)

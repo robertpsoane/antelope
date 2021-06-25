@@ -3,7 +3,7 @@ import React, { Component } from "react";
 class UserSettings extends Component {
   state = {};
   render() {
-    return <div>UserSettings</div>;
+    return <h1>User Settings Page</h1>;
   }
 }
 
