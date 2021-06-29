@@ -13,7 +13,7 @@ function Login(props) {
   }
 
   return (
-    <div className="login-center">
+    <div className="f-center">
       <h3>Login</h3>
       <p></p>
       <Form>
@@ -39,7 +39,7 @@ function Login(props) {
           />
         </Form.Group>
         <p></p>
-        <div id="login-error"></div>
+        <div id="error-msg"></div>
         <Form.Group controlId="formSubmit">
           <Button
             onClick={() => {

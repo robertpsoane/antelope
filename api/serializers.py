@@ -1,6 +1,6 @@
 from django.db.models.query import QuerySet
 from rest_framework import serializers
-from .models import CodingSessions, Turns, CodingClasses, Codings
+from .models import CodingSessions, Turns, CodingSchema, Codings, CodingSchemaLevels
 from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,10 +27,21 @@ class TurnsSerializer(serializers.ModelSerializer):
         model = Turns
         fields = ('id', 'SessionID', 'Sequence', 'Speaker', 'Speech')
 
-class CodingClassesSerializer(serializers.ModelSerializer):
+class CodingSchemaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CodingClasses
+        model = CodingSchema
         fields = ('id', 'ClassName', 'ClassDescription')
+
+class CodingSchemaWithLevels(serializers.ModelSerializer):
+    levels = serializers.SlugRelatedField(many=True, queryset=CodingSchemaLevels, slug_field="Level")
+    class Meta:
+        model = CodingSchema
+        fields = ('id', 'ClassName', 'ClassShort', 'ClassDescription', 'levels')
+
+class CodingSchemaLevelsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CodingSchemaLevels
+        fields = ('id', 'Coding', 'Level')
 
 class CodingsSerializer(serializers.ModelSerializer):
     class Meta:

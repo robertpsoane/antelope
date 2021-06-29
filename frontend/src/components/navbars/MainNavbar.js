@@ -2,7 +2,7 @@
 Main navbar for most pages - different to the login navbar used for 
 the login page
 */
-import React, { Component, useEffect } from "react";
+import React from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { handleLogout, getLoginStatus } from "../../scripts/auth";
