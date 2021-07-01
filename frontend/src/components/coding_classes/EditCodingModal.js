@@ -27,7 +27,7 @@ function EditCodingModal(props) {
 
     if (data != "error") {
       data.id = id;
-      console.log(data);
+
       const response = await putUpdatedClass(data);
       // Reload cards and hide modal
       reloadCards();

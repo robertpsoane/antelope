@@ -47,6 +47,7 @@ function CodingCardButtons(props) {
           show={showDeleteModal}
           id={props.id}
           classname={props.classname}
+          short={props.short}
           reloadCards={() => {
             props.reloadCards();
             setShowDeleteModal(false);

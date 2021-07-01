@@ -37,6 +37,9 @@ function CodingsEditDeck(props) {
           />
         </div>
       </div>
+      <div className="row">
+        <p>Coding classes can be added and modified on this page.</p>
+      </div>
       {cards.map((card, i) => {
         return (
           <CodingCard

@@ -10,7 +10,7 @@ function NewCodingButton(props) {
   return (
     <div>
       <Button className="float-end" onClick={() => setModalShow(true)}>
-        New Coding Class
+        New Class
       </Button>
       <NewCodingModal
         onHide={() => setModalShow(false)}

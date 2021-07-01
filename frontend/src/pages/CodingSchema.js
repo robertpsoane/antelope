@@ -13,9 +13,10 @@ function CodingSchema(props) {
       </p>
       <CodingsViewDeck />
       <p>
-        These codings, descriptions and levels can be changed by an
-        adminstrator. While technically possible, it is not recommended that
-        codings are removed as labelled turns will be effected.
+        These codings, descriptions and levels can be modified by an
+        adminstrator via the settings page. While technically possible, it is
+        not recommended that codings are removed as labelled turns will be
+        effected.
       </p>
     </div>
   );

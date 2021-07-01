@@ -18,9 +18,6 @@ function Navbar(props) {
       {/* Switch on url path, display relevant page based on path */}
       <Router>
         <Switch>
-          <Route exact path="/coder">
-            <MainNavbar page="none" />
-          </Route>
           <Route exact path="/settings">
             <MainNavbar page="settings" />
           </Route>
@@ -35,6 +32,9 @@ function Navbar(props) {
           </Route>
           <Route exact path="/">
             <MainNavbar page="transcripts" />
+          </Route>
+          <Route>
+            <MainNavbar page="none" />
           </Route>
         </Switch>
       </Router>

@@ -1,21 +1,30 @@
+from django.db.models.query import InstanceCheckMeta
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import generics, permissions, serializers
 from rest_framework.decorators import permission_classes
-from .models import CodingSessions, Turns, CodingSchema, CodingSchemaLevels, Codings
-from .serializers import (CodingSessionsSerializer, TurnsSerializer, 
-    CodingSchemaSerializer, CodingsSerializer, UserSerializer, 
+from .models import CodingSessions, CodingSchema, CodingSchemaLevels
+from .serializers import (CodingSessionsSerializer, 
+    CodingSchemaSerializer,  UserSerializer, 
     CodingSchemaLevelsSerializer, CodingSchemaWithLevels) 
 from .permissions import IsOwner
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
-
+import os
+import hashlib
+import time
 from django.http import JsonResponse
 
+from .scripts.processTranscripts import transcript2dict
+
+
 # Create your views here.
+
+MODULE_PATH = os.path.dirname(os.path.abspath(__file__))
+TRANSCRIPTS_LOCATION = os.path.join(MODULE_PATH, "transcripts")
 
 # Defacto API view - doesn't do anything useful, just shows were on the 
 # right route
@@ -87,23 +96,51 @@ class UserDetail(generics.RetrieveAPIView):
 class CodingSessionsListView(generics.ListCreateAPIView):
     queryset = CodingSessions.objects.all()
     serializer_class = CodingSessionsSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    permission_classes = [IsOwner]
+
+    def get_queryset(self):
+        return self.queryset.filter(UserID=self.request.user)
 
 class CodingSessionsInstanceView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CodingSessions.objects.all()
     serializer_class = CodingSessionsSerializer    
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    permission_classes = [IsOwner]
 
-class TurnsListView(generics.ListCreateAPIView):
-    queryset = Turns.objects.all()
-    serializer_class = TurnsSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    def get(self, request, *args, **kwargs):
+        # Getting default response
+        response = super().get(request, *args, **kwargs)
+        
+        # Loading saved transcript
+        # Getting location of all versions
+        username = request.user.username
+        user_dir = os.path.join(TRANSCRIPTS_LOCATION, username)
+        transcript_dir = os.path.join(user_dir, response.data["TranscriptLocation"])
+        file_names = os.listdir(transcript_dir)
 
-class TurnsInstanceView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Turns.objects.all()
-    serializer_class = TurnsSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+        # Finding latest version of filename
+        latest_file = str(max([int(file_name[:-5]) for file_name in file_names])) + ".json"
+        transcript_loc = os.path.join(transcript_dir, latest_file)
+        
+        # Loading transcript
+        with open(transcript_loc) as f:
+            transcript = json.load(f)
+        response.data["Transcript"] = transcript
 
+        return response
+
+@permission_classes([permissions.IsAuthenticated])
+@require_http_methods(["PUT"])
+def update_transcript_metadata(request):
+    data = json.loads(request.body)
+    validated_data = {
+        "SessionName": data["transcript_name"],
+        "Notes" : data["transcript_notes"]
+    }
+    instance = CodingSessions.objects.get(pk=data["transcript_id"])
+    Serializer = CodingSessionsSerializer()
+    serialized = Serializer.update(instance, validated_data)
+    return JsonResponse({"success":True})
+    
 ################
 # Schema Views #
 ################
@@ -225,17 +262,42 @@ def edit_coding_with_levels(request):
     # Returning new record as a JSON
     return JsonResponse(response)
 
-#################
-# Codings Views #
-#################
+# Process new transcript and add to database
+@permission_classes([permissions.IsAuthenticated])
+def new_transcript(request):
+    data = json.loads(request.body)
+    session_name = data["name"]
+    session_notes = data["notes"]
+    transcript = data["text"]
+    upload_file_name = data["file_name"]
+    
+    # Hashing file name with upload time to generate unique name for 
+    # document
+    str_to_hash = upload_file_name + str(time.time()) 
+    save_dir = hashlib.md5(str_to_hash.encode()).hexdigest()
+    
+    # Get location to store transcript documents
+    username = request.user.username
+    user_transcripts = os.path.join(TRANSCRIPTS_LOCATION, username)
+    if not os.path.isdir(user_transcripts):
+        os.mkdir(user_transcripts)
+    transcript_dir = os.path.join(user_transcripts, save_dir)
+    os.mkdir(transcript_dir)
+    json_location = os.path.join(transcript_dir, "0.json")
 
-class CodingsListView(generics.ListCreateAPIView):
-    queryset = Codings.objects.all()
-    serializer_class = CodingsSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    transcript_document = transcript2dict(transcript)
 
-class CodingsInstanceView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Codings.objects.all()
-    serializer_class = CodingsSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwner]
+    with open(json_location, "w") as f:
+        json.dump(transcript_document, f)
 
+    val_data = {
+        "UserID": request.user,
+        "SessionName":session_name,
+        "Notes":session_notes,
+        "TranscriptLocation":save_dir
+           }
+
+    SessionSerializer = CodingSessionsSerializer()
+    SessionSerializer.create(val_data)
+
+    return JsonResponse({"received":True})

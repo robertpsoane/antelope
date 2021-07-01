@@ -79,7 +79,7 @@ export async function putUpdatedClass(data) {
     // Converting AJAX response to json
     (response) => response.json()
   );
-  console.log(response);
+
   return response;
 }
 

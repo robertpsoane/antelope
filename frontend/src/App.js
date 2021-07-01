@@ -17,8 +17,20 @@ import SessionCoder from "./pages/SessionCoder.js";
 import TranscriptManager from "./pages/TranscriptManager.js";
 import UserSettings from "./pages/UserSettings.js";
 import ModifyCodingSchema from "./pages/ModifyCodingSchema";
+import ViewTranscript from "./pages/ViewTranscript.js";
 
 function App(props) {
+  function getTranscriptID() {
+    var out;
+    try {
+      const id = window.location.pathname.split("/")[2];
+      out = parseInt(id);
+    } catch {
+      out = null;
+    }
+    return out;
+  }
+
   return (
     <div>
       <div id="nav">
@@ -54,6 +66,11 @@ function App(props) {
                 <Route exact path="/modify_schema/">
                   <div id="page">
                     <ModifyCodingSchema />
+                  </div>
+                </Route>
+                <Route path="/view">
+                  <div id="page">
+                    <ViewTranscript transcript_id={getTranscriptID()} />
                   </div>
                 </Route>
                 <Route exact path="/">

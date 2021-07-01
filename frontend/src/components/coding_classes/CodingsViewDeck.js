@@ -13,22 +13,33 @@ function CodingsViewDeck(props) {
     getSetCodings();
   }, []);
 
-  return (
-    <div>
-      {cards.map((card, i) => {
-        return (
-          <CodingCard
-            key={card.id}
-            id={card.id}
-            classname={card.ClassName}
-            short={card.ClassShort}
-            description={card.ClassDescription}
-            levels={card.levels}
-          />
-        );
-      })}
-    </div>
-  );
+  if (cards.length > 0) {
+    return (
+      <div>
+        {cards.map((card, i) => {
+          return (
+            <CodingCard
+              key={card.id}
+              id={card.id}
+              classname={card.ClassName}
+              short={card.ClassShort}
+              description={card.ClassDescription}
+              levels={card.levels}
+            />
+          );
+        })}
+      </div>
+    );
+  } else {
+    return (
+      <p className="text-center">
+        <em>
+          Coding schema empty... <br /> No coding classes have been added by the
+          administrator.
+        </em>
+      </p>
+    );
+  }
 }
 
 export default CodingsViewDeck;

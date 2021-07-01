@@ -5,7 +5,7 @@ import { loginRedirect, homeRedirect } from "./redirects";
 // Handles login attempt
 export async function handleLogin() {
   const cookies = new Cookies();
-  console.log("Login Attempted");
+
   const user = document.getElementById("formUser").value;
   const pass = document.getElementById("formPassword").value;
 
@@ -41,7 +41,6 @@ function loginFailed() {
 
 // Handles logout
 export function handleLogout() {
-  console.log("Logout Attempted");
   fetch("/api/auth_logout/");
   loginRedirect();
 }
