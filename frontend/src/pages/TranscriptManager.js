@@ -41,7 +41,12 @@ function TranscriptManager(props) {
           </div>
         </div>
       </div>
-
+      <div className="row">
+        <p>
+          On this page you can view, upload, modify and download your
+          transcripts in a csv.
+        </p>
+      </div>
       <div className="row">
         <Table striped bordered hover>
           <thead>

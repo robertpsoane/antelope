@@ -26,10 +26,10 @@ function CodingsEditDeck(props) {
   return (
     <div>
       <div className="row">
-        <div className="col-10">
+        <div className="col-8">
           <h1>Modify Coding Schema</h1>
         </div>
-        <div className="col-2">
+        <div className="col-4">
           <NewCodingButton
             reloadCards={() => {
               reloadNewCards();

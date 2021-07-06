@@ -81,3 +81,23 @@ export async function updateTranscriptMetadata() {
   );
   return response;
 }
+
+export function deleteTurn(turnId, turns) {
+  // Deletes turns using pointers
+  const turn = turns[turnId];
+  const previousId = turn["previous"];
+  const nextId = turn["next"];
+
+  if (previousId == "start") {
+    turns["start"] = turn["next"];
+    turns[turn["next"]]["previous"] = "start";
+  } else if (nextId == "end") {
+    turns["end"] = turn["previous"];
+    turns[turn["previous"]]["next"] = "end";
+  } else {
+    turns[turn["previous"]]["next"] = turn["next"];
+    turns[turn["next"]]["previous"] = turn["previous"];
+  }
+  delete turns[turnId];
+  return turns;
+}

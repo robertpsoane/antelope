@@ -27,9 +27,13 @@ def transcript2dict(transcript):
             "speaker":speaker,
             "speech":speech,
             "next": key + 1,
+            "previous": key - 1,
             "code": None
         }
-    # Retrospectively map last element in document to "end"
+
+    # Retrospectively map last element in document to "end", and previous 
+    # first to start
     transcript_document[transcript_document["end"]]["next"] = "end"
+    transcript_document[transcript_document["start"]]["previous"] = "start"
 
     return transcript_document

@@ -59,7 +59,7 @@ function MetadataModal(props) {
               variant="primary"
               style={{ marginTop: "10px" }}
             >
-              Submit
+              Save
             </Button>
           </Form.Group>
         </Form>
@@ -74,31 +74,29 @@ function TranscriptCard(props) {
   const transcript_meta = { ...props.transcript };
 
   return (
-    <div>
-      <Card>
-        <Card.Header>
-          <div className="row">
-            <div className="col-10">
-              <Card.Title>Transcript: {transcript_meta.SessionName}</Card.Title>
-            </div>
-            <div className="col-2">
-              <div style={{ float: "right" }}>
-                <Button
-                  className="btn-secondary"
-                  onClick={() => setShowModal(true)}
-                >
-                  Edit Metadata
-                </Button>
-              </div>
+    <Card>
+      <Card.Header>
+        <div className="row">
+          <div className="col-10">
+            <Card.Title>Transcript: {transcript_meta.SessionName}</Card.Title>
+          </div>
+          <div className="col-2">
+            <div style={{ float: "right" }}>
+              <Button
+                className="btn-secondary"
+                onClick={() => setShowModal(true)}
+              >
+                Edit Metadata
+              </Button>
             </div>
           </div>
-        </Card.Header>
-        <Card.Body>{transcript_meta.Notes}</Card.Body>
-        <Card.Footer>
-          Uploaded on {transcript_meta.UploadDate} at{" "}
-          {transcript_meta.UploadTime.split(".")[0]}
-        </Card.Footer>
-      </Card>
+        </div>
+      </Card.Header>
+      <Card.Body>{transcript_meta.Notes}</Card.Body>
+      <Card.Footer>
+        Uploaded on {transcript_meta.UploadDate} at{" "}
+        {transcript_meta.UploadTime.split(".")[0]}
+      </Card.Footer>
       <MetadataModal
         onHide={() => setShowModal(false)}
         show={showModal}
@@ -110,7 +108,7 @@ function TranscriptCard(props) {
           setShowModal(false);
         }}
       />
-    </div>
+    </Card>
   );
 }
 export default TranscriptCard;

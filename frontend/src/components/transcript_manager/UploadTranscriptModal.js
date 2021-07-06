@@ -4,8 +4,8 @@ import { uploadTranscript } from "../../scripts/transcripts.js";
 
 function UploadTranscriptModal(props) {
   var { reloadTranscripts, ...otherProps } = props;
-  function handleKeyPress() {
-    uploadTranscript();
+  async function handleKeyPress() {
+    const response = await uploadTranscript();
     reloadTranscripts();
   }
 

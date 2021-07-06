@@ -5,34 +5,27 @@ import { getOrderedPointers } from "../../scripts/transcripts";
 
 function TranscriptAsTable(props) {
   const fullTranscript = { ...props.transcript };
-  const transcriptTurns = fullTranscript.Transcript;
+  const turns = fullTranscript.Transcript;
 
-  const keys = getOrderedPointers(transcriptTurns);
+  const keys = getOrderedPointers(turns);
 
   return (
-    <Table striped bordered hover>
+    <Table
+      style={{ borderRadius: "20px !important", borderCollapse: "collapsed" }}
+      striped
+      bordered
+      hover
+    >
       <thead>
         <tr>
-          <th>Speaker</th>
-          <th>Speech</th>
-          <th>Code</th>
-          <th></th>
+          <th className="col-2">Speaker</th>
+          <th className="col-9">Speech</th>
+          <th className="col-1">Code</th>
         </tr>
       </thead>
       <tbody>
         {keys.map((key, _) => {
-          const turn = transcriptTurns[key];
-          const speaker = turn["speaker"];
-          const speech = turn["speech"];
-          const code = turn["code"];
-          return (
-            <tr key={key}>
-              <td>{speaker}</td>
-              <td>{speech}</td>
-              <td>{code}</td>
-              <td></td>
-            </tr>
-          );
+          return <TurnRow key={key} turnId={key} turns={turns} />;
         })}
       </tbody>
     </Table>

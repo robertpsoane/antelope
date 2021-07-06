@@ -24,7 +24,15 @@ function ViewTranscript(props) {
     getSetTranscript();
   }
 
-  function setUnsavedTranscript(t) {}
+  function setUnsaved() {
+    const controlsOutput = document.getElementById("controls-output");
+    controlsOutput.innerHTML = "Unsaved changes";
+  }
+
+  function setUnsavedTranscript(t) {
+    setUnsaved();
+    setTranscript(t);
+  }
 
   if (t_id == null) {
     window.location.pathname = "";
@@ -44,15 +52,15 @@ function ViewTranscript(props) {
           />
         </div>
         <div style={{ marginTop: "10px" }}>
-          <p>Controls go here</p>
+          {/*<div className="row">
+            <div className="col-6">
+              <p id="controls-output">Controls go here</p>
+            </div>
+            <div id="controls-input" className="col-6"></div>
+    </div>*/}
         </div>
         <div className="row">
-          <TranscriptAsTable
-            transcript={transcript}
-            setTranscript={(t) => {
-              setUnsavedTranscript(t);
-            }}
-          />
+          <TranscriptAsTable transcript={transcript} />
         </div>
       </div>
     );
