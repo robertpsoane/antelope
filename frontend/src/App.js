@@ -18,6 +18,7 @@ import TranscriptManager from "./pages/TranscriptManager.js";
 import UserSettings from "./pages/UserSettings.js";
 import ModifyCodingSchema from "./pages/ModifyCodingSchema";
 import ViewTranscript from "./pages/ViewTranscript.js";
+import LabelTranscript from "./pages/LabelTranscript.js";
 
 function App(props) {
   function getTranscriptID() {
@@ -71,6 +72,11 @@ function App(props) {
                 <Route path="/view">
                   <div id="page">
                     <ViewTranscript transcript_id={getTranscriptID()} />
+                  </div>
+                </Route>
+                <Route path="/label">
+                  <div id="page">
+                    <LabelTranscript transcript_id={getTranscriptID()} />
                   </div>
                 </Route>
                 <Route exact path="/">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Modal, Button, ButtonGroup } from "react-bootstrap";
 import { deleteClass } from "../../scripts/coding-classes-queries";
 

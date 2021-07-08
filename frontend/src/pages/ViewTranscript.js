@@ -51,14 +51,7 @@ function ViewTranscript(props) {
             reloadTranscript={() => reloadTranscript()}
           />
         </div>
-        <div style={{ marginTop: "10px" }}>
-          {/*<div className="row">
-            <div className="col-6">
-              <p id="controls-output">Controls go here</p>
-            </div>
-            <div id="controls-input" className="col-6"></div>
-    </div>*/}
-        </div>
+        <div style={{ marginTop: "10px" }}></div>
         <div className="row">
           <TranscriptAsTable transcript={transcript} />
         </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Button, Modal, Form } from "react-bootstrap";
+import { Card, Button, ButtonGroup, Modal, Form } from "react-bootstrap";
 import { updateTranscriptMetadata } from "../../scripts/transcripts";
 
 function MetadataModal(props) {
@@ -14,6 +14,7 @@ function MetadataModal(props) {
     const response = await updateTranscriptMetadata();
     reloadTranscript();
   }
+
   return (
     <Modal
       {...otherProps}
@@ -72,22 +73,25 @@ function TranscriptCard(props) {
   const [showModal, setShowModal] = useState(false);
   // Cloning transcript
   const transcript_meta = { ...props.transcript };
-
+  const label_url = "/label/" + transcript_meta.id + "/";
   return (
     <Card>
       <Card.Header>
         <div className="row">
-          <div className="col-10">
+          <div className="col-8">
             <Card.Title>Transcript: {transcript_meta.SessionName}</Card.Title>
           </div>
-          <div className="col-2">
+          <div className="col-4">
             <div style={{ float: "right" }}>
-              <Button
-                className="btn-secondary"
-                onClick={() => setShowModal(true)}
-              >
-                Edit Metadata
-              </Button>
+              <ButtonGroup>
+                <Button href={label_url}>Label</Button>
+                <Button
+                  className="btn-secondary"
+                  onClick={() => setShowModal(true)}
+                >
+                  Edit Metadata
+                </Button>
+              </ButtonGroup>
             </div>
           </div>
         </div>

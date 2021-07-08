@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
 class CodingSessionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CodingSessions
-        fields = ('id', 'UserID', 'SessionName', 'Notes', 'TranscriptLocation', 'UploadDate', 'UploadTime')
+        fields = ('id', 'UserID', 'SessionName', 'Notes', 'TranscriptLocation', 'NextCoding', 'NTurns', 'UploadDate', 'UploadTime')
 
 class CodingSchemaSerializer(serializers.ModelSerializer):
     class Meta:

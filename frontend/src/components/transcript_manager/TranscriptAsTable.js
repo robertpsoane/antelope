@@ -7,8 +7,6 @@ function TranscriptAsTable(props) {
   const fullTranscript = { ...props.transcript };
   const turns = fullTranscript.Transcript;
 
-  const keys = getOrderedPointers(turns);
-
   return (
     <Table
       style={{ borderRadius: "20px !important", borderCollapse: "collapsed" }}
@@ -24,8 +22,8 @@ function TranscriptAsTable(props) {
         </tr>
       </thead>
       <tbody>
-        {keys.map((key, _) => {
-          return <TurnRow key={key} turnId={key} turns={turns} />;
+        {turns.map((turn, idx) => {
+          return <TurnRow key={idx} turnId={idx} turn={turn} />;
         })}
       </tbody>
     </Table>

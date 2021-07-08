@@ -52,7 +52,8 @@ function TranscriptManager(props) {
           <thead>
             <tr>
               <th className="col-3">Session</th>
-              <th className="col-5">Notes</th>
+              <th className="col-4">Notes</th>
+              <th className="col-1">Progress</th>
               <th className="col-2">Date</th>
               <th className="col-2"></th>
             </tr>
@@ -66,6 +67,8 @@ function TranscriptManager(props) {
                   name={transcript.SessionName}
                   notes={transcript.Notes}
                   date={transcript.UploadDate}
+                  nturns={transcript.NTurns}
+                  next={transcript.NextCoding}
                 />
               );
             })}

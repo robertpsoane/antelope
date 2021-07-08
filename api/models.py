@@ -8,6 +8,8 @@ class CodingSessions(models.Model):
     SessionName = models.CharField(max_length=100, default="")
     Notes = models.TextField(max_length=1000)
     TranscriptLocation = models.CharField(max_length=255)
+    NextCoding = models.IntegerField()
+    NTurns = models.IntegerField()
     UploadDate = models.DateField(auto_now_add=True) 
     UploadTime = models.TimeField(auto_now_add=True)
 

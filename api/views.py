@@ -10,7 +10,9 @@ from .serializers import (CodingSessionsSerializer,
     CodingSchemaSerializer,  UserSerializer, 
     CodingSchemaLevelsSerializer, CodingSchemaWithLevels) 
 from .permissions import IsOwner
-from django.views.decorators.csrf import csrf_exempt
+
+from .al.ActiveLearningInterface import ActiveLearningInterface
+# from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
 import os
@@ -18,18 +20,32 @@ import hashlib
 import time
 from django.http import JsonResponse
 
-from .scripts.processTranscripts import transcript2dict
+from .scripts.processTranscripts import transcript2list
+from .scripts.loadTranscript import (loadTranscript, 
+    loadTranscriptFromUsername, saveNewTranscript)
 
 
 # Create your views here.
 
 MODULE_PATH = os.path.dirname(os.path.abspath(__file__))
 TRANSCRIPTS_LOCATION = os.path.join(MODULE_PATH, "transcripts")
+MODELCONFIG_LOCATION = os.path.join(
+    os.path.join(MODULE_PATH, ".."),
+    "modelconfig.json")
+
+## Load Config Data
+def load_config():
+    with open(MODELCONFIG_LOCATION) as f:
+        config = json.load(f)
+    return config
 
 # Defacto API view - doesn't do anything useful, just shows were on the 
 # right route
 def default_api(request):
     return HttpResponse("API Root")
+
+def test_api(request):
+    return HttpResponse("scratchpad api didn't fail")
 
 ###############
 # Login Views #
@@ -109,24 +125,113 @@ class CodingSessionsInstanceView(generics.RetrieveUpdateDestroyAPIView):
     def get(self, request, *args, **kwargs):
         # Getting default response
         response = super().get(request, *args, **kwargs)
-        
-        # Loading saved transcript
-        # Getting location of all versions
-        username = request.user.username
-        user_dir = os.path.join(TRANSCRIPTS_LOCATION, username)
-        transcript_dir = os.path.join(user_dir, response.data["TranscriptLocation"])
-        file_names = os.listdir(transcript_dir)
-
-        # Finding latest version of filename
-        latest_file = str(max([int(file_name[:-5]) for file_name in file_names])) + ".json"
-        transcript_loc = os.path.join(transcript_dir, latest_file)
-        
-        # Loading transcript
-        with open(transcript_loc) as f:
-            transcript = json.load(f)
+        transcript = loadTranscript(request, response, TRANSCRIPTS_LOCATION)
         response.data["Transcript"] = transcript
+        return response
+
+class LabellingBatch(generics.RetrieveAPIView):
+    queryset = CodingSessions.objects.all()
+    serializer_class = CodingSessionsSerializer    
+    permission_classes = [IsOwner]
+
+    def get(self, request, *args, **kwargs):
+        # Getting default response
+        response = super().get(request, *args, **kwargs)
+        transcript = loadTranscript(request, response, TRANSCRIPTS_LOCATION)
+        config_data = load_config()
+        n_turns = response.data["NTurns"]
+        start_idx = response.data["NextCoding"]
+        end_idx = min(
+            start_idx + config_data["batchSize"],
+            n_turns
+        )
+        
+        batch = transcript[start_idx:end_idx]
+        model = ActiveLearningInterface()
+        for turn in batch:
+            turn["prediction"] = model.predict(turn["speech"])
+        response.data["batch"] = batch
+
+        if start_idx != 0:
+            previous_turn = transcript[start_idx - 1]
+        else:
+            previous_turn = None
+        if end_idx < n_turns:
+            next_turn = transcript[end_idx]
+        else:
+            next_turn = None
+        response.data["previous"] = previous_turn
+        response.data["next"] = next_turn
+        response.data["start"] = start_idx
+        response.data["end"] = end_idx - 1
+        response.data["schema"] = coding_schema_as_list()
+        print(f"Sending {start_idx}")
 
         return response
+
+
+@permission_classes([permissions.IsAuthenticated])
+@require_http_methods(["PUT"])
+def put_labelled_transcript(request):
+    data = json.loads(request.body)
+    
+    # Updating record in db with new NextCoding
+    instance = CodingSessions.objects.get(pk=data["id"])
+    Serializer = CodingSessionsSerializer()
+    validated_data = {
+        "NextCoding": data["NextCoding"] + len(data["batch"])
+    }
+    print(instance)
+    serialized = Serializer.update(instance, validated_data)
+
+    # Loading transcript
+    username = request.user.username
+    transcript_location = data["TranscriptLocation"]
+    old_transcript = loadTranscriptFromUsername(username, TRANSCRIPTS_LOCATION,
+                                                transcript_location)
+    new_transcript = data["batch"]
+    model = ActiveLearningInterface()
+    model.train(new_transcript)
+    start_idx = data["start"]
+    end_idx = data["end"] + 1
+    for idx in range(start_idx, end_idx):
+        old_transcript[idx]["code"] = new_transcript[idx - start_idx]["code"]
+
+        # Below two lines only needed if possibility of server side edits
+        # old_transcript["idx"]["speaker"] = new_transcript["idx"]["speaker"]
+        # old_transcript["idx"]["speech"] = new_transcript["idx"]["speech"]
+
+    # Saving new transcript
+    saveNewTranscript(old_transcript, username, TRANSCRIPTS_LOCATION, 
+                                                transcript_location)
+    
+    return JsonResponse({"success":True})
+
+ 
+
+def coding_schema_as_list():
+    """
+    Function to return list of dictionaries representing the coding 
+    schema in the database
+    """
+    View = CodingSchemaWithLevelsListView()
+    Serializer = CodingSchemaWithLevels
+    schema = {
+        instance["id"] : {
+            "ClassName" :  instance["ClassName"],
+            "ClassShort":  instance["ClassShort"],
+            "levels" : instance["levels"]
+        }
+        for instance 
+        in [
+            Serializer(instance).data 
+            for instance 
+            in View.get_queryset()
+        ]
+    }
+    return schema
+
+
 
 @permission_classes([permissions.IsAuthenticated])
 @require_http_methods(["PUT"])
@@ -285,7 +390,7 @@ def new_transcript(request):
     os.mkdir(transcript_dir)
     json_location = os.path.join(transcript_dir, "0.json")
 
-    transcript_document = transcript2dict(transcript)
+    transcript_document = transcript2list(transcript)
 
     with open(json_location, "w") as f:
         json.dump(transcript_document, f)
@@ -294,7 +399,9 @@ def new_transcript(request):
         "UserID": request.user,
         "SessionName":session_name,
         "Notes":session_notes,
-        "TranscriptLocation":save_dir
+        "TranscriptLocation":save_dir,
+        "NextCoding":0,
+        "NTurns":len(transcript_document)
            }
 
     SessionSerializer = CodingSessionsSerializer()

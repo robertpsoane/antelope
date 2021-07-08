@@ -45,19 +45,6 @@ export async function uploadTranscript() {
   const response = await postTranscript(data);
 }
 
-export function getOrderedPointers(transcript_turns) {
-  var pointer = transcript_turns["start"];
-
-  const orderedKeys = [];
-
-  while (pointer != "end") {
-    orderedKeys.push(pointer);
-    const turn = transcript_turns[pointer];
-    var pointer = turn["next"];
-  }
-  return orderedKeys;
-}
-
 export async function updateTranscriptMetadata() {
   const data = {
     transcript_id: document.getElementById("transcriptId").value,
@@ -80,24 +67,4 @@ export async function updateTranscriptMetadata() {
     (response) => response.json()
   );
   return response;
-}
-
-export function deleteTurn(turnId, turns) {
-  // Deletes turns using pointers
-  const turn = turns[turnId];
-  const previousId = turn["previous"];
-  const nextId = turn["next"];
-
-  if (previousId == "start") {
-    turns["start"] = turn["next"];
-    turns[turn["next"]]["previous"] = "start";
-  } else if (nextId == "end") {
-    turns["end"] = turn["previous"];
-    turns[turn["previous"]]["next"] = "end";
-  } else {
-    turns[turn["previous"]]["next"] = turn["next"];
-    turns[turn["next"]]["previous"] = turn["previous"];
-  }
-  delete turns[turnId];
-  return turns;
 }

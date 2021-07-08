@@ -14,17 +14,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from .views import (default_api, CodingSessionsListView, CodingSchemaListView, 
+from .views import (default_api, test_api, CodingSessionsListView, CodingSchemaListView, 
     CodingSessionsInstanceView, CodingSchemaInstanceView,
     UserList, UserDetail, user_login, user_logout,
     get_login_data, change_password, new_coding_with_levels, edit_coding_with_levels,
     CodingSchemaWithLevelsListView, CodingSchemaWithLevelsInstanceView, 
     CodingSchemaInstanceEdit, CodingSchemaNewInstance, CodingSchemaWithLevelsListViewAdmin,
-    new_transcript, update_transcript_metadata)
+    new_transcript, update_transcript_metadata, LabellingBatch, put_labelled_transcript)
 
 urlpatterns = [
+    path('test/', test_api),
     path('sessions/', CodingSessionsListView.as_view()),
     path('sessions/<int:pk>/', CodingSessionsInstanceView.as_view()),
+    path('label_session/<int:pk>/', LabellingBatch.as_view()),
+    path('label_session_put_labels/', put_labelled_transcript),
     path('coding_schema/', CodingSchemaListView.as_view()),
     path('coding_schema/<int:pk>/', CodingSchemaInstanceView.as_view()),
     path('coding_schema_with_levels/', CodingSchemaWithLevelsListView.as_view()),
