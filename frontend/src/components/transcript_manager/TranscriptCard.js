@@ -10,14 +10,16 @@ import DeleteTranscriptModal from "./DeleteTranscriptModal";
 function MetadataModal(props) {
   var {
     transcriptId,
-    sessionName,
-    sessionNotes,
+    TranscriptName,
+    transcriptNotes,
     reloadTranscript,
     ...otherProps
   } = props;
   async function handleSubmit() {
     const response = await updateTranscriptMetadata();
-    reloadTranscript();
+    if (response) {
+      reloadTranscript();
+    }
   }
 
   return (
@@ -42,21 +44,21 @@ function MetadataModal(props) {
             ></Form.Control>
           </Form.Group>
 
-          <Form.Group controlId="sessionName">
-            <Form.Label>Session Name</Form.Label>
-            <Form.Control type="text" defaultValue={sessionName} />
+          <Form.Group controlId="transcriptName">
+            <Form.Label>Transcript Name</Form.Label>
+            <Form.Control type="text" defaultValue={TranscriptName} />
           </Form.Group>
 
-          <Form.Group controlId="sessionNotes">
+          <Form.Group controlId="transcriptNotes">
             <Form.Label>Notes</Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
               placeholder="Description"
-              defaultValue={sessionNotes}
+              defaultValue={transcriptNotes}
             />
           </Form.Group>
-
+          <div id="error-div" style={{ marginTop: "10px" }}></div>
           <Form.Group controlId="formSubmit">
             <Button
               onClick={() => {
@@ -80,7 +82,7 @@ function TranscriptCard(props) {
 
   // Cloning transcript
   const transcript_meta = { ...props.transcript };
-  const name = transcript_meta.SessionName;
+  const name = transcript_meta.TranscriptName;
   const transcript_id = transcript_meta.id;
   const label_url = "/label/" + transcript_id + "/";
   return (
@@ -128,8 +130,8 @@ function TranscriptCard(props) {
       <MetadataModal
         onHide={() => setShowModal(false)}
         show={showModal}
-        sessionName={transcript_meta.SessionName}
-        sessionNotes={transcript_meta.Notes}
+        TranscriptName={transcript_meta.TranscriptName}
+        transcriptNotes={transcript_meta.Notes}
         transcriptId={transcript_meta.id}
         reloadTranscript={() => {
           props.reloadTranscript();

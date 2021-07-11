@@ -47,7 +47,7 @@ function TranscriptManager(props) {
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th className="col-3">Session</th>
+              <th className="col-3">Transcript</th>
               <th className="col-4">Notes</th>
               <th className="col-1">Progress</th>
               <th className="col-2">Date</th>
@@ -60,11 +60,11 @@ function TranscriptManager(props) {
                 <TranscriptRow
                   key={transcript.id}
                   transcript_id={transcript.id}
-                  name={transcript.SessionName}
+                  name={transcript.TranscriptName}
                   notes={transcript.Notes}
                   date={transcript.UploadDate}
                   nturns={transcript.NTurns}
-                  next={transcript.NextCoding}
+                  next={transcript.NextLabelling}
                   reloadTranscripts={reloadTranscripts}
                 />
               );

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import CodingCard from "./CodingCard";
-import { getAllClass } from "../../scripts/coding-classes-queries";
+import LabellingCard from "./LabellingCard";
+import { getAllClass } from "../../scripts/labelling-classes-queries";
 
-function CodingsViewDeck(props) {
+function LabellingsViewDeck(props) {
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
-    async function getSetCodings() {
+    async function getSetLabellings() {
       const response = await getAllClass();
       setCards(response);
     }
-    getSetCodings();
+    getSetLabellings();
   }, []);
 
   if (cards.length > 0) {
@@ -18,7 +18,7 @@ function CodingsViewDeck(props) {
       <div>
         {cards.map((card, i) => {
           return (
-            <CodingCard
+            <LabellingCard
               key={card.id}
               id={card.id}
               classname={card.ClassName}
@@ -34,12 +34,12 @@ function CodingsViewDeck(props) {
     return (
       <p className="text-center">
         <em>
-          Coding schema empty... <br /> No coding classes have been added by the
-          administrator.
+          Labelling schema empty... <br /> No labelling classes have been added
+          by the administrator.
         </em>
       </p>
     );
   }
 }
 
-export default CodingsViewDeck;
+export default LabellingsViewDeck;

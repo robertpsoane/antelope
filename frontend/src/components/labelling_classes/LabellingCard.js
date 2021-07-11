@@ -1,8 +1,8 @@
 import React from "react";
 import { Card } from "react-bootstrap";
-import CodingCardButtons from "./CodingCardButtons";
+import LabellingCardButtons from "./LabellingCardButtons";
 
-function CodingCard(props) {
+function LabellingCard(props) {
   return (
     <Card id={"card-" + props.id} className="m-3">
       <Card.Header>
@@ -11,7 +11,7 @@ function CodingCard(props) {
             {props.classname} ({props.short})
           </div>
           <div className="col-4">
-            <CodingCardButtons
+            <LabellingCardButtons
               modify={props.modify}
               id={props.id}
               classname={props.classname}
@@ -40,4 +40,4 @@ function CodingCard(props) {
   );
 }
 
-export default CodingCard;
+export default LabellingCard;

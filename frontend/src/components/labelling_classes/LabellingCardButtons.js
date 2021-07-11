@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { ButtonGroup, Button } from "react-bootstrap";
 import { Pencil, XCircle } from "react-bootstrap-icons";
-import EditCodingModal from "./EditCodingModal";
+import EditLabellingModal from "./EditLabellingModal";
 import DeleteModal from "./DeleteModal";
 
-function CodingCardButtons(props) {
+function LabellingCardButtons(props) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -29,7 +29,7 @@ function CodingCardButtons(props) {
             <XCircle />
           </Button>
         </ButtonGroup>
-        <EditCodingModal
+        <EditLabellingModal
           onHide={() => setShowEditModal(false)}
           show={showEditModal}
           id={props.id}
@@ -60,4 +60,4 @@ function CodingCardButtons(props) {
   }
 }
 
-export default CodingCardButtons;
+export default LabellingCardButtons;

@@ -14,8 +14,8 @@ function LabelTranscript(props) {
   useEffect(() => {
     async function getSetBatch() {
       const response = await getTranscriptBatch(t_id);
-      if (response.NTurns == response.NextCoding) {
-        finishedSession();
+      if (response.NTurns == response.NextLabelling) {
+        finishedTranscript();
       }
       setBatch(response);
       setTurnNumber(response.start);
@@ -25,8 +25,8 @@ function LabelTranscript(props) {
 
   async function refreshBatch() {
     const response = await getTranscriptBatch(t_id);
-    if (response.NTurns == response.NextCoding) {
-      finishedSession();
+    if (response.NTurns == response.NextLabelling) {
+      finishedTranscript();
     }
     setTurnNumber(response.start);
     setBatch(response);
@@ -48,13 +48,13 @@ function LabelTranscript(props) {
     }
   }
 
-  function finishedSession() {
+  function finishedTranscript() {
     window.location.href = "/view/" + t_id + "/";
   }
 
   if (t_id == null) {
     window.location.pathname = "";
-  } else if (batch.SessionName == null) {
+  } else if (batch.TranscriptName == null) {
     return (
       <Spinner animation="border" role="status">
         <span className="visually-hidden">Loading...</span>

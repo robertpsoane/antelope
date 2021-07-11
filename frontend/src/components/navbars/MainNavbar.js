@@ -33,13 +33,13 @@ function MainNavbar(props) {
   return (
     <Navbar expand="lg" bg="dark" variant="dark">
       <div className="container-fluid">
-        <Navbar.Brand href="/">Session Labelling</Navbar.Brand>
+        <Navbar.Brand href="/">Transcript Labelling</Navbar.Brand>
         <Nav className="mr-auto">
           <Nav.Link className={pageStatus.transcripts} href="/">
             Transcripts
           </Nav.Link>
-          <Nav.Link className={pageStatus.schema} href="/coding_schema">
-            Coding Schema
+          <Nav.Link className={pageStatus.schema} href="/labelling_schema">
+            Labelling Schema
           </Nav.Link>
           <Nav.Link className={pageStatus.settings} href="/settings">
             Settings

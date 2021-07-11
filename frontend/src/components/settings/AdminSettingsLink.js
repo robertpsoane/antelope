@@ -9,7 +9,7 @@ function AdminSettingsLink(props) {
         <h3>Admin Settings</h3>
         <p>
           The following buttons are only available to admin users. The Admin
-          Panel can be used to add new users, and Modify Coding Schema can be
+          Panel can be used to add new users, and Modify Labelling Schema can be
           used to update the schema.
         </p>
         <Button
@@ -24,7 +24,7 @@ function AdminSettingsLink(props) {
           href="/modify_schema/"
           style={{ marginRight: "5px", marginLeft: "5px" }}
         >
-          Modify Coding Schema
+          Modify Labels
         </Button>
       </div>
     );

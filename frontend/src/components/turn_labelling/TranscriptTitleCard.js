@@ -2,7 +2,7 @@ import React from "react";
 import { Card, ProgressBar } from "react-bootstrap";
 
 function TranscriptTitleCard(props) {
-  const title = props.batch.SessionName;
+  const title = props.batch.TranscriptName;
   const notes = props.batch.Notes;
   const currentTurn = props.turnNumber + 1;
   const nTurns = props.batch.NTurns;
@@ -19,7 +19,7 @@ function TranscriptTitleCard(props) {
       <Card.Body>{notes}</Card.Body>
       <Card.Footer>
         <div className="row">
-          <div id="whole-session-stats" className="col-6">
+          <div id="whole-transcript-stats" className="col-6">
             <h6>Transcript</h6>
             Turn: {currentTurn}/{nTurns}
             <ProgressBar now={currentTurn - 1} min="0" max={nTurns} />

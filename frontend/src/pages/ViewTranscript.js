@@ -26,7 +26,7 @@ function ViewTranscript(props) {
 
   if (t_id == null) {
     window.location.pathname = "";
-  } else if (transcript.SessionName == null) {
+  } else if (transcript.TranscriptName == null) {
     return (
       <Spinner animation="border" role="status">
         <span className="visually-hidden">Loading...</span>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Button, ButtonGroup } from "react-bootstrap";
-import { deleteClass } from "../../scripts/coding-classes-queries";
+import { deleteClass } from "../../scripts/labelling-classes-queries";
 
 function DeleteModal(props) {
   //const [show, setShow] = useState(false);
@@ -28,9 +28,9 @@ function DeleteModal(props) {
       </Modal.Header>
 
       <Modal.Body>
-        You are about to delete coding class {short}. This is irreversible, and
-        will remove codings of any dialogue turns coded as {short} for all
-        users. <br /> If you wish to modify {short} you can use the edit
+        You are about to delete labelling class {short}. This is irreversible,
+        and will remove labellings of any dialogue turns coded as {short} for
+        all users. <br /> If you wish to modify {short} you can use the edit
         function.
       </Modal.Body>
 

@@ -18,59 +18,91 @@ export async function postTranscript(data) {
 }
 
 export async function getTranscripts() {
-  const transcripts = await fetch("/api/sessions/").then((result) =>
+  const transcripts = await fetch("/api/transcripts/").then((result) =>
     result.json()
   );
   return transcripts;
 }
 
 export async function getTranscriptByID(id) {
-  const url = "/api/sessions/" + id + "/";
+  const url = "/api/transcripts/" + id + "/";
   const transcript = await fetch(url).then((result) => result.json());
   return transcript;
 }
 
-export async function uploadTranscript() {
-  const sessionName = document.getElementById("sessionName").value;
-  const sessionNotes = document.getElementById("sessionNotes").value;
-  const sessionText = document.getElementById("sessionTextData").value;
-  const fileName = document.getElementById("sessionFile").files[0].name;
+function uploadError(missingField) {
+  const errorDiv = document.getElementById("error-div");
+  errorDiv.classList.add("alert");
+  errorDiv.classList.add("alert-danger");
+  errorDiv.innerHTML = "<b>Error:</b> Please provide " + missingField;
+}
 
-  const data = {
-    name: sessionName,
-    notes: sessionNotes,
-    text: sessionText,
-    file_name: fileName,
-  };
-  const response = await postTranscript(data);
+export async function uploadTranscript() {
+  const transcriptName = document.getElementById("transcriptName").value;
+  const transcriptNotes = document.getElementById("transcriptNotes").value;
+  const transcriptText = document.getElementById("transcriptTextData").value;
+
+  if (transcriptName == "") {
+    uploadError("Transcript Name");
+    return false;
+  } else if (transcriptNotes == "") {
+    uploadError("Transcript Notes");
+    return false;
+  } else if (transcriptText == "") {
+    uploadError("Transcript File");
+    return false;
+  } else {
+    const fileName = document.getElementById("transcriptFile").files[0].name;
+
+    const data = {
+      name: transcriptName,
+      notes: transcriptNotes,
+      text: transcriptText,
+      file_name: fileName,
+    };
+
+    const response = await postTranscript(data);
+  }
+  return true;
 }
 
 export async function updateTranscriptMetadata() {
-  const data = {
-    transcript_id: document.getElementById("transcriptId").value,
-    transcript_name: document.getElementById("sessionName").value,
-    transcript_notes: document.getElementById("sessionNotes").value,
-  };
+  const transcriptName = document.getElementById("transcriptName").value;
+  const transcriptNotes = document.getElementById("transcriptNotes").value;
 
-  const cookies = new Cookies();
+  if (transcriptName == "") {
+    uploadError("Transcript Name");
+    return false;
+  } else if (transcriptNotes == "") {
+    uploadError("Transcript Notes");
+    return false;
+  } else {
+    const data = {
+      transcript_id: document.getElementById("transcriptId").value,
+      transcript_name: transcriptName,
+      transcript_notes: transcriptNotes,
+    };
 
-  const response = await fetch("/api/update_transcript_metadata/", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": cookies.get("csrftoken"),
-    },
-    credentials: "same-origin",
-    body: JSON.stringify(data),
-  }).then(
-    // Converting AJAX response to json
-    (response) => response.json()
-  );
-  return response;
+    const cookies = new Cookies();
+
+    const response = await fetch("/api/update_transcript_metadata/", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": cookies.get("csrftoken"),
+      },
+      credentials: "same-origin",
+      body: JSON.stringify(data),
+    }).then(
+      // Converting AJAX response to json
+      (response) => response.json()
+    );
+    return true;
+  }
 }
 
 export async function deleteTranscript(transcript_id) {
-  const url = "/api/sessions/" + transcript_id + "/";
+  const url = "/api/transcripts/" + transcript_id + "/";
   const cookies = new Cookies();
   const response = await fetch(url, {
     method: "DELETE",

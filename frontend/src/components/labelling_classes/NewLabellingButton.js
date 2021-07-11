@@ -2,10 +2,10 @@ import React, { useState } from "react";
 
 import { ButtonGroup, Button } from "react-bootstrap";
 
-import NewCodingModal from "./NewCodingModal";
-import { autoLoadCICS } from "../../scripts/coding-classes-queries";
+import NewLabellingModal from "./NewLabellingModal";
+import { autoLoadCICS } from "../../scripts/labelling-classes-queries";
 
-function NewCodingButton(props) {
+function NewLabellingButton(props) {
   const [modalShow, setModalShow] = useState(false);
 
   async function handleCICSButton() {
@@ -21,7 +21,7 @@ function NewCodingButton(props) {
           Load CICS
         </Button>
       </ButtonGroup>
-      <NewCodingModal
+      <NewLabellingModal
         onHide={() => setModalShow(false)}
         show={modalShow}
         reloadCards={() => {
@@ -33,4 +33,4 @@ function NewCodingButton(props) {
   );
 }
 
-export default NewCodingButton;
+export default NewLabellingButton;

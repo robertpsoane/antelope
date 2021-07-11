@@ -21,7 +21,7 @@ function Navbar(props) {
           <Route exact path="/settings">
             <MainNavbar page="settings" />
           </Route>
-          <Route exact path="/coding_schema">
+          <Route exact path="/labelling_schema">
             <MainNavbar page="schema" />
           </Route>
           <Route exact path="/login">

@@ -1,14 +1,12 @@
-from django.db.models.query import InstanceCheckMeta
-from django.shortcuts import render
 from django.http import HttpResponse, FileResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from rest_framework import generics, permissions, serializers
+from rest_framework import generics, permissions
 from rest_framework.decorators import permission_classes
-from .models import CodingSessions, CodingSchema, CodingSchemaLevels
-from .serializers import (CodingSessionsSerializer, 
-    CodingSchemaSerializer,  UserSerializer, 
-    CodingSchemaLevelsSerializer, CodingSchemaWithLevels) 
+from .models import Transcripts, LabellingSchema, LabellingSchemaLevels
+from .serializers import (TranscriptSerializer, 
+    LabellingSchemaSerializer,  UserSerializer, 
+    LabellingSchemaLevelsSerializer, LabellingSchemaWithLevels) 
 from .permissions import IsOwner
 
 from .al.ActiveLearningInterface import ActiveLearningInterface
@@ -110,17 +108,17 @@ class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class CodingSessionsListView(generics.ListCreateAPIView):
-    queryset = CodingSessions.objects.all()
-    serializer_class = CodingSessionsSerializer
+class TranscriptListView(generics.ListCreateAPIView):
+    queryset = Transcripts.objects.all()
+    serializer_class = TranscriptSerializer
     permission_classes = [IsOwner]
 
     def get_queryset(self):
         return self.queryset.filter(UserID=self.request.user)
 
-class CodingSessionsInstanceView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CodingSessions.objects.all()
-    serializer_class = CodingSessionsSerializer    
+class TranscriptInstanceView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Transcripts.objects.all()
+    serializer_class = TranscriptSerializer    
     permission_classes = [IsOwner]
 
     def get(self, request, *args, **kwargs):
@@ -128,12 +126,12 @@ class CodingSessionsInstanceView(generics.RetrieveUpdateDestroyAPIView):
         response = super().get(request, *args, **kwargs)
         transcript = loadTranscript(request, response, TRANSCRIPTS_LOCATION)
         response.data["Transcript"] = transcript
-        response.data["schema"] = coding_schema_as_list()
+        response.data["schema"] = labelling_schema_as_list()
         return response
 
     def delete(self, request, *args, **kwargs):
         # Get location of documents
-        instance = CodingSessions.objects.get(pk=kwargs["pk"])
+        instance = Transcripts.objects.get(pk=kwargs["pk"])
         transcript_location = instance.TranscriptLocation
         
         # Delete documents
@@ -146,8 +144,8 @@ class CodingSessionsInstanceView(generics.RetrieveUpdateDestroyAPIView):
         return JsonResponse({"deleted":True})
 
 class LabellingBatch(generics.RetrieveAPIView):
-    queryset = CodingSessions.objects.all()
-    serializer_class = CodingSessionsSerializer    
+    queryset = Transcripts.objects.all()
+    serializer_class = TranscriptSerializer    
     permission_classes = [IsOwner]
 
     def get(self, request, *args, **kwargs):
@@ -156,7 +154,7 @@ class LabellingBatch(generics.RetrieveAPIView):
         transcript = loadTranscript(request, response, TRANSCRIPTS_LOCATION)
         config_data = load_config()
         n_turns = response.data["NTurns"]
-        start_idx = response.data["NextCoding"]
+        start_idx = response.data["NextLabelling"]
         end_idx = min(
             start_idx + config_data["batchSize"],
             n_turns
@@ -180,7 +178,7 @@ class LabellingBatch(generics.RetrieveAPIView):
         response.data["next"] = next_turn
         response.data["start"] = start_idx
         response.data["end"] = end_idx - 1
-        response.data["schema"] = coding_schema_as_list()
+        response.data["schema"] = labelling_schema_as_list()
         print(f"Sending {start_idx}")
 
         return response
@@ -191,11 +189,11 @@ class LabellingBatch(generics.RetrieveAPIView):
 def put_labelled_transcript(request):
     data = json.loads(request.body)
     
-    # Updating record in db with new NextCoding
-    instance = CodingSessions.objects.get(pk=data["id"])
-    Serializer = CodingSessionsSerializer()
+    # Updating record in db with new NextLabelling
+    instance = Transcripts.objects.get(pk=data["id"])
+    Serializer = TranscriptSerializer()
     validated_data = {
-        "NextCoding": data["NextCoding"] + len(data["batch"])
+        "NextLabelling": data["NextLabelling"] + len(data["batch"])
     }
     print(instance)
     serialized = Serializer.update(instance, validated_data)
@@ -225,13 +223,13 @@ def put_labelled_transcript(request):
 
  
 
-def coding_schema_as_list():
+def labelling_schema_as_list():
     """
-    Function to return list of dictionaries representing the coding 
+    Function to return list of dictionaries representing the Labelling 
     schema in the database
     """
-    View = CodingSchemaWithLevelsListView()
-    Serializer = CodingSchemaWithLevels
+    View = LabellingSchemaWithLevelsListView()
+    Serializer = LabellingSchemaWithLevels
     schema = {
         instance["id"] : {
             "ClassName" :  instance["ClassName"],
@@ -254,53 +252,53 @@ def coding_schema_as_list():
 def update_transcript_metadata(request):
     data = json.loads(request.body)
     validated_data = {
-        "SessionName": data["transcript_name"],
+        "TranscriptName": data["transcript_name"],
         "Notes" : data["transcript_notes"]
     }
-    instance = CodingSessions.objects.get(pk=data["transcript_id"])
-    Serializer = CodingSessionsSerializer()
+    instance = Transcripts.objects.get(pk=data["transcript_id"])
+    Serializer = TranscriptSerializer()
     serialized = Serializer.update(instance, validated_data)
     return JsonResponse({"success":True})
     
 ################
 # Schema Views #
 ################
-class CodingSchemaInstanceView(generics.RetrieveAPIView):
-    queryset = CodingSchema.objects.all()
-    serializer_class = CodingSchemaSerializer
+class LabellingSchemaInstanceView(generics.RetrieveAPIView):
+    queryset = LabellingSchema.objects.all()
+    serializer_class = LabellingSchemaSerializer
 
-class CodingSchemaListView(generics.ListAPIView):
-    queryset = CodingSchema.objects.all()
-    serializer_class = CodingSchemaSerializer
+class LabellingSchemaListView(generics.ListAPIView):
+    queryset = LabellingSchema.objects.all()
+    serializer_class = LabellingSchemaSerializer
 
-class CodingSchemaWithLevelsInstanceView(generics.RetrieveAPIView):
-    queryset = CodingSchema.objects.all()
-    serializer_class = CodingSchemaWithLevels
+class LabellingSchemaWithLevelsInstanceView(generics.RetrieveAPIView):
+    queryset = LabellingSchema.objects.all()
+    serializer_class = LabellingSchemaWithLevels
 
-class CodingSchemaWithLevelsListView(generics.ListAPIView):
-    queryset = CodingSchema.objects.all()
-    serializer_class = CodingSchemaWithLevels
+class LabellingSchemaWithLevelsListView(generics.ListAPIView):
+    queryset = LabellingSchema.objects.all()
+    serializer_class = LabellingSchemaWithLevels
 
-class CodingSchemaWithLevelsListViewAdmin(generics.ListAPIView):
-    queryset = CodingSchema.objects.all()
-    serializer_class = CodingSchemaWithLevels
+class LabellingSchemaWithLevelsListViewAdmin(generics.ListAPIView):
+    queryset = LabellingSchema.objects.all()
+    serializer_class = LabellingSchemaWithLevels
     permission_classes = [permissions.IsAdminUser]
 
-class CodingSchemaNewInstance(generics.CreateAPIView):
-    queryset = CodingSchema.objects.all()
-    serializer_class = CodingSchemaSerializer
+class LabellingSchemaNewInstance(generics.CreateAPIView):
+    queryset = LabellingSchema.objects.all()
+    serializer_class = LabellingSchemaSerializer
     permission_classes = [permissions.IsAdminUser]
 
-class CodingSchemaInstanceEdit(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CodingSchema.objects.all()
-    serializer_class = CodingSchemaSerializer
+class LabellingSchemaInstanceEdit(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LabellingSchema.objects.all()
+    serializer_class = LabellingSchemaSerializer
     permission_classes = [permissions.IsAdminUser]
 
 @require_http_methods(["POST"])
 @permission_classes([permissions.IsAdminUser])
-def new_coding_with_levels(request):
-    """ new_coding_with_levels
-    Adds a new coding class, along with the corresponding levels from an
+def new_labelling_with_levels(request):
+    """ new_labelling_with_levels
+    Adds a new labelling class, along with the corresponding levels from an
     api request
     """
     # Extract request data
@@ -311,18 +309,18 @@ def new_coding_with_levels(request):
         short = data["short"]
     else:
         short = name[:1]
-    coding = {
+    labelling = {
         "ClassName" : name,
         "ClassDescription": description,
         "ClassShort" : short
     }
-    response = {"coding": coding, "levels":[]}
-    SchemaSerializer = CodingSchemaSerializer()
-    LevelsSerializer = CodingSchemaLevelsSerializer()
-    serialized = SchemaSerializer.create(coding)
+    response = {"labelling": labelling, "levels":[]}
+    SchemaSerializer = LabellingSchemaSerializer()
+    LevelsSerializer = LabellingSchemaLevelsSerializer()
+    serialized = SchemaSerializer.create(labelling)
     
     for level in data["levels"]:
-        levelModel = {"Coding":serialized, "Level":level}
+        levelModel = {"Labelling":serialized, "Level":level}
         LevelsSerializer.create(
             levelModel
         )
@@ -332,9 +330,9 @@ def new_coding_with_levels(request):
 
 @require_http_methods(["PUT"])
 @permission_classes([permissions.IsAdminUser])
-def edit_coding_with_levels(request):
-    """ edit_coding_with_levels
-    Takes an API PUT request and updates any changes to coding class and
+def edit_labelling_with_levels(request):
+    """ edit_labelling_with_levels
+    Takes an API PUT request and updates any changes to labelling class and
     corresponding levels
     """
     # Unpacking request
@@ -345,25 +343,25 @@ def edit_coding_with_levels(request):
         short = data["short"]
     else:
         short = name[:1]
-    # Compiling new coding data
-    coding = {
+    # Compiling new labelling data
+    labelling = {
         "ClassName" : name,
         "ClassDescription": description,
         "ClassShort" : short
     }
-    response = {"coding": coding, "levels":[]}
+    response = {"labelling": labelling, "levels":[]}
 
-    # Getting and updating coding data (not levels)
-    instance = CodingSchema.objects.get(pk=data["id"])
-    SchemaSerializer = CodingSchemaSerializer()
-    serialized = SchemaSerializer.update(instance, coding)
+    # Getting and updating labelling data (not levels)
+    instance = LabellingSchema.objects.get(pk=data["id"])
+    SchemaSerializer = LabellingSchemaSerializer()
+    serialized = SchemaSerializer.update(instance, labelling)
 
     # Processing levels
-    LevelsSerializer = CodingSchemaLevelsSerializer()
+    LevelsSerializer = LabellingSchemaLevelsSerializer()
     new_levels = data["levels"]
-    old_levels = CodingSchemaLevels.objects.filter(Coding=data["id"])
+    old_levels = LabellingSchemaLevels.objects.filter(Labelling=data["id"])
     included_levels = []
-    # For each previous level, checking if still in coding class, 
+    # For each previous level, checking if still in labelling class, 
     # removing any which aren't
     for level in old_levels:
         level_num = level.Level
@@ -374,7 +372,7 @@ def edit_coding_with_levels(request):
     # Checking for any new levels and adding to db
     for level in new_levels:
         if level not in included_levels:
-            levelModel = {"Coding":serialized, "Level":level}
+            levelModel = {"Labelling":serialized, "Level":level}
             LevelsSerializer.create(
                 levelModel
             )
@@ -387,8 +385,8 @@ def edit_coding_with_levels(request):
 @permission_classes([permissions.IsAuthenticated])
 def new_transcript(request):
     data = json.loads(request.body)
-    session_name = data["name"]
-    session_notes = data["notes"]
+    transcript_name = data["name"]
+    transcript_notes = data["notes"]
     transcript = data["text"]
     upload_file_name = data["file_name"]
     
@@ -413,24 +411,23 @@ def new_transcript(request):
 
     val_data = {
         "UserID": request.user,
-        "SessionName":session_name,
-        "Notes":session_notes,
+        "TranscriptName":transcript_name,
+        "Notes":transcript_notes,
         "TranscriptLocation":save_dir,
-        "NextCoding":0,
+        "NextLabelling":0,
         "NTurns":len(transcript_document)
            }
 
-    SessionSerializer = CodingSessionsSerializer()
-    SessionSerializer.create(val_data)
+    Serializer = TranscriptSerializer()
+    Serializer.create(val_data)
 
     return JsonResponse({"received":True})
 
-from io import StringIO
 
 
-class CodingSessionDownload(generics.RetrieveAPIView):
-    queryset = CodingSessions.objects.all()
-    serializer_class = CodingSessionsSerializer    
+class TranscriptDownload(generics.RetrieveAPIView):
+    queryset = Transcripts.objects.all()
+    serializer_class = TranscriptSerializer    
     permission_classes = [IsOwner]
     
     def get(self, request, *args, **kwargs):
@@ -438,11 +435,11 @@ class CodingSessionDownload(generics.RetrieveAPIView):
         response = super().get(request, *args, **kwargs)
 
         # Make file name
-        transcript_name = response.data["SessionName"]
+        transcript_name = response.data["TranscriptName"]
         transcript_name = "_".join(transcript_name.lower().split(" ")) + ".csv"
 
         # Make csv
-        schema = coding_schema_as_list()
+        schema = labelling_schema_as_list()
         csv = loadTranscriptAsCSV(request, response, TRANSCRIPTS_LOCATION, schema)
         return JsonResponse({"file":csv,"name":transcript_name})
 

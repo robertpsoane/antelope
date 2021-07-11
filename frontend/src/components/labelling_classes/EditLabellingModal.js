@@ -5,9 +5,9 @@ import {
   getDataFromModalForm,
   putUpdatedClass,
   POSSIBLE_LEVELS,
-} from "../../scripts/coding-classes-queries";
+} from "../../scripts/labelling-classes-queries";
 
-function EditCodingModal(props) {
+function EditLabellingModal(props) {
   const [show, setShow] = useState(false);
   var {
     id,
@@ -42,14 +42,14 @@ function EditCodingModal(props) {
       centered
     >
       <Modal.Header>
-        <Modal.Title>Edit Coding Class</Modal.Title>
+        <Modal.Title>Edit Labelling Class</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
         <Form>
           <div className="row">
             <div className="col-8">
-              <Form.Group controlId="codingName">
+              <Form.Group controlId="labellingName">
                 <Form.Label>Class Name</Form.Label>
                 <Form.Control
                   type="text"
@@ -59,7 +59,7 @@ function EditCodingModal(props) {
               </Form.Group>
             </div>
             <div className="col-4">
-              <Form.Group controlId="codingShort">
+              <Form.Group controlId="labellingShort">
                 <Form.Label>Class Acronym</Form.Label>
                 <Form.Control
                   type="text"
@@ -69,7 +69,7 @@ function EditCodingModal(props) {
               </Form.Group>
             </div>
           </div>
-          <Form.Group controlId="codingDescription">
+          <Form.Group controlId="labellingDescription">
             <Form.Label>Class Description</Form.Label>
             <Form.Control
               as="textarea"
@@ -80,7 +80,7 @@ function EditCodingModal(props) {
           </Form.Group>
 
           <Form.Label>Levels</Form.Label>
-          <Form.Group controlId="codingLevels">
+          <Form.Group controlId="labellingLevels">
             {POSSIBLE_LEVELS.map((l, i) => {
               if (levels.includes(l)) {
                 return (
@@ -126,4 +126,4 @@ function EditCodingModal(props) {
   );
 }
 
-export default EditCodingModal;
+export default EditLabellingModal;

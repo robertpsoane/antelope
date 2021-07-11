@@ -1,15 +1,15 @@
 from django.db.models.query import QuerySet
 from rest_framework import serializers
-from .models import CodingSessions, CodingSchema, CodingSchemaLevels
+from .models import Transcripts, LabellingSchema, LabellingSchemaLevels
 from django.contrib.auth.models import User
 
 import json
 
 class UserSerializer(serializers.ModelSerializer):
-    user_sessions = serializers.PrimaryKeyRelatedField(many=True, queryset=CodingSessions.objects.all())
+    user_transcripts = serializers.PrimaryKeyRelatedField(many=True, queryset=Transcripts.objects.all())
     class Meta:
         model = User
-        fields = ('id', 'username', 'password', 'user_sessions')
+        fields = ('id', 'username', 'password', 'user_transcripts')
         extra_kwargs = {'password': {'write_only': True, 'required': True}}
 
     def create(self, data):
@@ -19,23 +19,23 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**userdata)
         return user
 
-class CodingSessionsSerializer(serializers.ModelSerializer):
+class TranscriptSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CodingSessions
-        fields = ('id', 'UserID', 'SessionName', 'Notes', 'TranscriptLocation', 'NextCoding', 'NTurns', 'UploadDate', 'UploadTime')
+        model = Transcripts
+        fields = ('id', 'UserID', 'TranscriptName', 'Notes', 'TranscriptLocation', 'NextLabelling', 'NTurns', 'UploadDate', 'UploadTime')
 
-class CodingSchemaSerializer(serializers.ModelSerializer):
+class LabellingSchemaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CodingSchema
+        model = LabellingSchema
         fields = ('id', 'ClassName', 'ClassDescription')
 
-class CodingSchemaWithLevels(serializers.ModelSerializer):
-    levels = serializers.SlugRelatedField(many=True, queryset=CodingSchemaLevels, slug_field="Level")
+class LabellingSchemaWithLevels(serializers.ModelSerializer):
+    levels = serializers.SlugRelatedField(many=True, queryset=LabellingSchemaLevels, slug_field="Level")
     class Meta:
-        model = CodingSchema
+        model = LabellingSchema
         fields = ('id', 'ClassName', 'ClassShort', 'ClassDescription', 'levels')
 
-class CodingSchemaLevelsSerializer(serializers.ModelSerializer):
+class LabellingSchemaLevelsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CodingSchemaLevels
-        fields = ('id', 'Coding', 'Level')
+        model = LabellingSchemaLevels
+        fields = ('id', 'Labelling', 'Level')

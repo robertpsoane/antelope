@@ -24,8 +24,8 @@ function LoginHelp(props) {
       </Modal.Header>
       <Modal.Body>
         <p>
-          To use the Session Labelling tool you must login. If you don't have an
-          account, or have forgotten your password please contact the system
+          To use the Transcript Labelling tool you must login. If you don't have
+          an account, or have forgotten your password please contact the system
           adminstrator.
         </p>
       </Modal.Body>

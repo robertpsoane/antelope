@@ -5,9 +5,9 @@ import {
   postNewClass,
   postClassError,
   POSSIBLE_LEVELS,
-} from "../../scripts/coding-classes-queries";
+} from "../../scripts/labelling-classes-queries";
 
-function NewCodingModal(props) {
+function NewLabellingModal(props) {
   const [show, setShow] = useState(false);
   var { reloadCards, ...otherProps } = props;
 
@@ -33,32 +33,32 @@ function NewCodingModal(props) {
         centered
       >
         <Modal.Header>
-          <Modal.Title>Add Coding Class</Modal.Title>
+          <Modal.Title>Add Labelling Class</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
           <Form>
             <div className="row">
               <div className="col-8">
-                <Form.Group controlId="codingName">
+                <Form.Group controlId="labellingName">
                   <Form.Label>Class Name</Form.Label>
                   <Form.Control type="text" placeholder="Class name" />
                 </Form.Group>
               </div>
               <div className="col-4">
-                <Form.Group controlId="codingShort">
+                <Form.Group controlId="labellingShort">
                   <Form.Label>Class Acronym</Form.Label>
                   <Form.Control type="text" placeholder="Enter acronym" />
                 </Form.Group>
               </div>
             </div>
-            <Form.Group controlId="codingDescription">
+            <Form.Group controlId="labellingDescription">
               <Form.Label>Class Description</Form.Label>
               <Form.Control as="textarea" rows={3} placeholder="Description" />
             </Form.Group>
 
             <Form.Label>Levels</Form.Label>
-            <Form.Group controlId="codingLevels">
+            <Form.Group controlId="labellingLevels">
               {POSSIBLE_LEVELS.map((l, i) => {
                 if (l == 0) {
                   return (
@@ -105,4 +105,4 @@ function NewCodingModal(props) {
   );
 }
 
-export default NewCodingModal;
+export default NewLabellingModal;

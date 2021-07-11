@@ -12,11 +12,11 @@ import Navbar from "./components/navbars/Navbar.js";
 
 // Pages
 import Login from "./pages/Login.js";
-import CodingSchema from "./pages/CodingSchema.js";
-import SessionCoder from "./pages/SessionCoder.js";
+import LabellingSchema from "./pages/LabellingSchema.js";
+import TranscriptCoder from "./pages/TranscriptCoder.js";
 import TranscriptManager from "./pages/TranscriptManager.js";
 import UserSettings from "./pages/UserSettings.js";
-import ModifyCodingSchema from "./pages/ModifyCodingSchema";
+import ModifyLabellingSchema from "./pages/ModifyLabellingSchema";
 import ViewTranscript from "./pages/ViewTranscript.js";
 import LabelTranscript from "./pages/LabelTranscript.js";
 
@@ -46,7 +46,7 @@ function App(props) {
               <Switch>
                 <Route exact path="/coder">
                   <div id="page">
-                    <SessionCoder />
+                    <TranscriptCoder />
                   </div>
                 </Route>
                 <Route exact path="/settings">
@@ -54,9 +54,9 @@ function App(props) {
                     <UserSettings />
                   </div>
                 </Route>
-                <Route exact path="/coding_schema">
+                <Route exact path="/labelling_schema">
                   <div id="page">
-                    <CodingSchema />
+                    <LabellingSchema />
                   </div>
                 </Route>
                 <Route exact path="/login">
@@ -66,7 +66,7 @@ function App(props) {
                 </Route>
                 <Route exact path="/modify_schema/">
                   <div id="page">
-                    <ModifyCodingSchema />
+                    <ModifyLabellingSchema />
                   </div>
                 </Route>
                 <Route path="/view">

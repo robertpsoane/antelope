@@ -1,36 +1,36 @@
 import React, { useEffect, useState } from "react";
-import CodingCard from "./CodingCard";
-import { getAllClassAdmin } from "../../scripts/coding-classes-queries";
-import NewCodingButton from "./NewCodingButton";
+import LabellingCard from "./LabellingCard";
+import { getAllClassAdmin } from "../../scripts/labelling-classes-queries";
+import NewLabellingButton from "./NewLabellingButton";
 
-function CodingsEditDeck(props) {
+function LabellingsEditDeck(props) {
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
-    async function getSetCodings() {
+    async function getSetLabellings() {
       const response = await getAllClassAdmin();
       setCards(response);
     }
-    getSetCodings();
+    getSetLabellings();
   }, []);
 
   function reloadNewCards() {
-    async function getSetCodings() {
+    async function getSetLabellings() {
       const response = await getAllClassAdmin();
       setCards(response);
     }
 
-    getSetCodings();
+    getSetLabellings();
   }
 
   return (
     <div>
       <div className="row">
         <div className="col-8">
-          <h1>Modify Coding Schema</h1>
+          <h1>Modify Labelling Schema</h1>
         </div>
         <div className="col-4">
-          <NewCodingButton
+          <NewLabellingButton
             reloadCards={() => {
               reloadNewCards();
             }}
@@ -38,11 +38,11 @@ function CodingsEditDeck(props) {
         </div>
       </div>
       <div className="row">
-        <p>Coding classes can be added and modified on this page.</p>
+        <p>Labelling classes can be added and modified on this page.</p>
       </div>
       {cards.map((card, i) => {
         return (
-          <CodingCard
+          <LabellingCard
             key={card.id}
             id={card.id}
             classname={card.ClassName}
@@ -60,4 +60,4 @@ function CodingsEditDeck(props) {
   );
 }
 
-export default CodingsEditDeck;
+export default LabellingsEditDeck;
