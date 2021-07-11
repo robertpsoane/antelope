@@ -21,6 +21,7 @@ function TranscriptRow(props) {
         <TranscriptRowButton
           transcript_id={props.transcript_id}
           name={props.name}
+          reloadTranscripts={props.reloadTranscripts}
         />
       </td>
     </tr>

@@ -24,16 +24,6 @@ function ViewTranscript(props) {
     getSetTranscript();
   }
 
-  function setUnsaved() {
-    const controlsOutput = document.getElementById("controls-output");
-    controlsOutput.innerHTML = "Unsaved changes";
-  }
-
-  function setUnsavedTranscript(t) {
-    setUnsaved();
-    setTranscript(t);
-  }
-
   if (t_id == null) {
     window.location.pathname = "";
   } else if (transcript.SessionName == null) {

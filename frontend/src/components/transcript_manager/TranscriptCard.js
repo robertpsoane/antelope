@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { Card, Button, ButtonGroup, Modal, Form } from "react-bootstrap";
-import { updateTranscriptMetadata } from "../../scripts/transcripts";
+import { Collection, Download, XCircle, Pencil } from "react-bootstrap-icons";
+import {
+  updateTranscriptMetadata,
+  downloadTranscript,
+} from "../../scripts/transcripts";
+import DeleteTranscriptModal from "./DeleteTranscriptModal";
 
 function MetadataModal(props) {
   var {
@@ -71,25 +76,44 @@ function MetadataModal(props) {
 
 function TranscriptCard(props) {
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   // Cloning transcript
   const transcript_meta = { ...props.transcript };
-  const label_url = "/label/" + transcript_meta.id + "/";
+  const name = transcript_meta.SessionName;
+  const transcript_id = transcript_meta.id;
+  const label_url = "/label/" + transcript_id + "/";
   return (
     <Card>
       <Card.Header>
         <div className="row">
           <div className="col-8">
-            <Card.Title>Transcript: {transcript_meta.SessionName}</Card.Title>
+            <Card.Title>Transcript: {name}</Card.Title>
           </div>
           <div className="col-4">
             <div style={{ float: "right" }}>
               <ButtonGroup>
-                <Button href={label_url}>Label</Button>
+                <Button variant="success" href={label_url}>
+                  <Collection />
+                </Button>
                 <Button
-                  className="btn-secondary"
-                  onClick={() => setShowModal(true)}
+                  variant="secondary"
+                  onClick={() => {
+                    downloadTranscript(transcript_id);
+                  }}
                 >
-                  Edit Metadata
+                  <Download />
+                </Button>
+                <Button variant="warning" onClick={() => setShowModal(true)}>
+                  <Pencil />
+                </Button>
+                <Button
+                  className="btn-danger"
+                  onClick={() => {
+                    setShowDeleteModal(true);
+                  }}
+                >
+                  <XCircle />
                 </Button>
               </ButtonGroup>
             </div>
@@ -110,6 +134,16 @@ function TranscriptCard(props) {
         reloadTranscript={() => {
           props.reloadTranscript();
           setShowModal(false);
+        }}
+      />
+      <DeleteTranscriptModal
+        transcript_id={transcript_id}
+        onHide={() => setShowDeleteModal(false)}
+        show={showDeleteModal}
+        name={name}
+        reloadTranscripts={() => {
+          setShowDeleteModal(false);
+          window.location.href = "/";
         }}
       />
     </Card>

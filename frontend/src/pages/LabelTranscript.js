@@ -14,6 +14,9 @@ function LabelTranscript(props) {
   useEffect(() => {
     async function getSetBatch() {
       const response = await getTranscriptBatch(t_id);
+      if (response.NTurns == response.NextCoding) {
+        finishedSession();
+      }
       setBatch(response);
       setTurnNumber(response.start);
     }
@@ -22,14 +25,16 @@ function LabelTranscript(props) {
 
   async function refreshBatch() {
     const response = await getTranscriptBatch(t_id);
+    if (response.NTurns == response.NextCoding) {
+      finishedSession();
+    }
     setTurnNumber(response.start);
     setBatch(response);
   }
 
   async function incrementTurn() {
     if (turnNumber == batch.end) {
-      console.log("finished");
-      // TODO - Send batch
+      // Batch finished
       const response = await postLabelledBatch(batch);
       refreshBatch();
     } else {
@@ -41,6 +46,10 @@ function LabelTranscript(props) {
     if (turnNumber > 0) {
       setTurnNumber(turnNumber - 1);
     }
+  }
+
+  function finishedSession() {
+    window.location.href = "/view/" + t_id + "/";
   }
 
   if (t_id == null) {

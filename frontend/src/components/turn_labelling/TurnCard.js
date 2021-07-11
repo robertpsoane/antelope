@@ -3,7 +3,6 @@ import { Card, Spinner } from "react-bootstrap";
 import LabelControls from "./LabelControls";
 
 function TurnCard(props) {
-  console.log(props);
   const turnNumber = props.turnNumber;
   if (
     turnNumber == null ||

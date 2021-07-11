@@ -1,10 +1,14 @@
 import React from "react";
 import { Modal, Button, ButtonGroup } from "react-bootstrap";
+import { deleteTranscript } from "../../scripts/transcripts";
 
 function DeleteTranscriptModal(props) {
-  var { transcript_id, name, ...otherProps } = props;
+  var { transcript_id, name, reloadTranscripts, ...otherProps } = props;
 
-  async function handleDelete() {}
+  async function handleDelete() {
+    const response = await deleteTranscript(transcript_id);
+    reloadTranscripts();
+  }
   return (
     <Modal
       {...otherProps}

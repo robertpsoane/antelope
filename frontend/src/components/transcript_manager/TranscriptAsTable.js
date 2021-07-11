@@ -1,11 +1,11 @@
 import React from "react";
 import { Table } from "react-bootstrap";
 import TurnRow from "./TurnRow";
-import { getOrderedPointers } from "../../scripts/transcripts";
 
 function TranscriptAsTable(props) {
   const fullTranscript = { ...props.transcript };
   const turns = fullTranscript.Transcript;
+  console.log(fullTranscript);
 
   return (
     <Table
@@ -18,12 +18,21 @@ function TranscriptAsTable(props) {
         <tr>
           <th className="col-2">Speaker</th>
           <th className="col-9">Speech</th>
-          <th className="col-1">Code</th>
+          <th className="col-1">Label</th>
         </tr>
       </thead>
       <tbody>
         {turns.map((turn, idx) => {
-          return <TurnRow key={idx} turnId={idx} turn={turn} />;
+          if (turn.code != null) {
+            const codeName = fullTranscript.schema[turn.code.class].ClassShort;
+            const codeLevel = turn.code.level;
+            var label = codeName + ", " + codeLevel;
+          } else {
+            var label = "-";
+          }
+          return (
+            <TurnRow key={idx} turnId={idx} turn={turn} turnLabel={label} />
+          );
         })}
       </tbody>
     </Table>

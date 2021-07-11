@@ -1,6 +1,6 @@
 from django.db.models.query import InstanceCheckMeta
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import generics, permissions, serializers
@@ -22,7 +22,8 @@ from django.http import JsonResponse
 
 from .scripts.processTranscripts import transcript2list
 from .scripts.loadTranscript import (loadTranscript, 
-    loadTranscriptFromUsername, saveNewTranscript)
+    loadTranscriptFromUsername, saveNewTranscript,
+    deleteTranscript, loadTranscriptAsCSV)
 
 
 # Create your views here.
@@ -127,7 +128,22 @@ class CodingSessionsInstanceView(generics.RetrieveUpdateDestroyAPIView):
         response = super().get(request, *args, **kwargs)
         transcript = loadTranscript(request, response, TRANSCRIPTS_LOCATION)
         response.data["Transcript"] = transcript
+        response.data["schema"] = coding_schema_as_list()
         return response
+
+    def delete(self, request, *args, **kwargs):
+        # Get location of documents
+        instance = CodingSessions.objects.get(pk=kwargs["pk"])
+        transcript_location = instance.TranscriptLocation
+        
+        # Delete documents
+        username = request.user.username
+        deleteTranscript(username, TRANSCRIPTS_LOCATION, transcript_location)
+        
+        # delete instance
+        instance.delete()
+        
+        return JsonResponse({"deleted":True})
 
 class LabellingBatch(generics.RetrieveAPIView):
     queryset = CodingSessions.objects.all()
@@ -408,3 +424,25 @@ def new_transcript(request):
     SessionSerializer.create(val_data)
 
     return JsonResponse({"received":True})
+
+from io import StringIO
+
+
+class CodingSessionDownload(generics.RetrieveAPIView):
+    queryset = CodingSessions.objects.all()
+    serializer_class = CodingSessionsSerializer    
+    permission_classes = [IsOwner]
+    
+    def get(self, request, *args, **kwargs):
+        # Get transcript data
+        response = super().get(request, *args, **kwargs)
+
+        # Make file name
+        transcript_name = response.data["SessionName"]
+        transcript_name = "_".join(transcript_name.lower().split(" ")) + ".csv"
+
+        # Make csv
+        schema = coding_schema_as_list()
+        csv = loadTranscriptAsCSV(request, response, TRANSCRIPTS_LOCATION, schema)
+        return JsonResponse({"file":csv,"name":transcript_name})
+

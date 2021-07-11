@@ -33,11 +33,7 @@ function TranscriptManager(props) {
         </div>
         <div className="col-2">
           <div style={{ float: "right" }}>
-            <UploadTranscriptButton
-              reloadTranscripts={() => {
-                reloadTranscripts();
-              }}
-            />
+            <UploadTranscriptButton reloadTranscripts={reloadTranscripts} />
           </div>
         </div>
       </div>
@@ -69,6 +65,7 @@ function TranscriptManager(props) {
                   date={transcript.UploadDate}
                   nturns={transcript.NTurns}
                   next={transcript.NextCoding}
+                  reloadTranscripts={reloadTranscripts}
                 />
               );
             })}

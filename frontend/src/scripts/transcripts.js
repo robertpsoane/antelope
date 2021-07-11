@@ -1,5 +1,5 @@
 import Cookies from "universal-cookie";
-
+import download from "downloadjs";
 export async function postTranscript(data) {
   const cookies = new Cookies();
   const response = await fetch("/api/new_transcript/", {
@@ -67,4 +67,38 @@ export async function updateTranscriptMetadata() {
     (response) => response.json()
   );
   return response;
+}
+
+export async function deleteTranscript(transcript_id) {
+  const url = "/api/sessions/" + transcript_id + "/";
+  const cookies = new Cookies();
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": cookies.get("csrftoken"),
+    },
+    credentials: "same-origin",
+  }).then(
+    // Converting AJAX response to json
+    (response) => response.json()
+  );
+  return response;
+}
+
+export async function downloadTranscript(transcript_id) {
+  const url = "/api/download_transcript/" + transcript_id + "/";
+  const cookies = new Cookies();
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": cookies.get("csrftoken"),
+    },
+    credentials: "same-origin",
+  }).then(
+    // Converting AJAX response to json
+    (response) => response.json()
+  );
+  download(response.file, response.name);
 }

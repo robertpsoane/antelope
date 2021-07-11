@@ -5,23 +5,15 @@ function TurnRow(props) {
   const turn = props.turn;
   const speaker = turn.speaker;
   const speech = turn.speech;
-  const code = turn.code;
+  const label = props.turnLabel;
 
   return (
     <tr id={"turn-" + turnId}>
       <td id={"speaker-" + turnId}>{speaker}</td>
       <td id={"speech-" + turnId}>{speech}</td>
-      <td>{getCodeString(code)}</td>
+      <td>{label}</td>
     </tr>
   );
-}
-
-function getCodeString(code) {
-  if (code == null) {
-    return "";
-  } else {
-    return code.class + ", " + code.level;
-  }
 }
 
 export default TurnRow;

@@ -20,7 +20,8 @@ from .views import (default_api, test_api, CodingSessionsListView, CodingSchemaL
     get_login_data, change_password, new_coding_with_levels, edit_coding_with_levels,
     CodingSchemaWithLevelsListView, CodingSchemaWithLevelsInstanceView, 
     CodingSchemaInstanceEdit, CodingSchemaNewInstance, CodingSchemaWithLevelsListViewAdmin,
-    new_transcript, update_transcript_metadata, LabellingBatch, put_labelled_transcript)
+    new_transcript, update_transcript_metadata, LabellingBatch, put_labelled_transcript,
+    CodingSessionDownload)
 
 urlpatterns = [
     path('test/', test_api),
@@ -37,6 +38,7 @@ urlpatterns = [
     path('coding_schema_new/', new_coding_with_levels),
     path('coding_schema_edit/', edit_coding_with_levels),
     path('new_transcript/', new_transcript),
+    path('download_transcript/<int:pk>/', CodingSessionDownload.as_view()),
     path('update_transcript_metadata/', update_transcript_metadata),
     path('users/', UserList.as_view()),
     path('users/<int:pk>/', UserDetail.as_view()),
