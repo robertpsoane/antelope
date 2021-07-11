@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, ProgressBar } from "react-bootstrap";
+import { Card, ProgressBar, Button } from "react-bootstrap";
 
 function TranscriptTitleCard(props) {
   const title = props.batch.TranscriptName;

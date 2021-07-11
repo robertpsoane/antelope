@@ -11,6 +11,7 @@ function ViewTranscript(props) {
   useEffect(() => {
     async function getSetTranscript() {
       const response = await getTranscriptByID(t_id);
+      console.log(response);
       setTranscript(response);
     }
     getSetTranscript();

@@ -114,7 +114,11 @@ class TranscriptListView(generics.ListCreateAPIView):
     permission_classes = [IsOwner]
 
     def get_queryset(self):
-        return self.queryset.filter(UserID=self.request.user)
+        query_set = self.queryset.filter(UserID=self.request.user)
+        query_set = query_set.order_by("-UploadDateTime")
+        return query_set
+    
+    
 
 class TranscriptInstanceView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Transcripts.objects.all()

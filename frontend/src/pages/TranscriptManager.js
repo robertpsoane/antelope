@@ -4,6 +4,7 @@ import { Table } from "react-bootstrap";
 
 import UploadTranscriptButton from "../components/transcript_manager/UploadTranscriptButton";
 import TranscriptRow from "../components/transcript_manager/TranscriptRow";
+import TranscriptSearch from "../components/transcript_manager/TranscriptSearch";
 import { getTranscripts } from "../scripts/transcripts";
 
 function TranscriptManager(props) {
@@ -37,12 +38,12 @@ function TranscriptManager(props) {
           </div>
         </div>
       </div>
-      <div className="row">
-        <p>
-          On this page you can view, upload, modify and download your
-          transcripts in a csv.
-        </p>
-      </div>
+      <div className="row" style={{ height: "20px" }}></div>
+      <TranscriptSearch
+        transcripts={transcripts}
+        setTranscripts={setTranscripts}
+      />
+      <div className="row" style={{ height: "20px" }}></div>
       <div className="row">
         <Table striped bordered hover>
           <thead>
@@ -56,18 +57,23 @@ function TranscriptManager(props) {
           </thead>
           <tbody>
             {transcripts.map((transcript, i) => {
-              return (
-                <TranscriptRow
-                  key={transcript.id}
-                  transcript_id={transcript.id}
-                  name={transcript.TranscriptName}
-                  notes={transcript.Notes}
-                  date={transcript.UploadDate}
-                  nturns={transcript.NTurns}
-                  next={transcript.NextLabelling}
-                  reloadTranscripts={reloadTranscripts}
-                />
-              );
+              if (transcript.show == null) {
+                transcript.show = true;
+              }
+              if (transcript.show) {
+                return (
+                  <TranscriptRow
+                    key={transcript.id}
+                    transcript_id={transcript.id}
+                    name={transcript.TranscriptName}
+                    notes={transcript.Notes}
+                    date={transcript.UploadDate}
+                    nturns={transcript.NTurns}
+                    next={transcript.NextLabelling}
+                    reloadTranscripts={reloadTranscripts}
+                  />
+                );
+              }
             })}
           </tbody>
         </Table>

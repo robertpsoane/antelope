@@ -11,7 +11,8 @@ class Transcripts(models.Model):
     NextLabelling = models.IntegerField()
     NTurns = models.IntegerField()
     UploadDate = models.DateField(auto_now_add=True) 
-    UploadTime = models.TimeField(auto_now_add=True)
+    UploadTime = models.TimeField(auto_now_add=True) 
+    UploadDateTime = models.DateTimeField(auto_now_add=True) 
 
 class LabellingSchema(models.Model):
     ClassName = models.CharField(max_length=30)

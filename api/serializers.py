@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
 class TranscriptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transcripts
-        fields = ('id', 'UserID', 'TranscriptName', 'Notes', 'TranscriptLocation', 'NextLabelling', 'NTurns', 'UploadDate', 'UploadTime')
+        fields = ('id', 'UserID', 'TranscriptName', 'Notes', 'TranscriptLocation', 'NextLabelling', 'NTurns', 'UploadDate', 'UploadTime', 'UploadDateTime')
 
 class LabellingSchemaSerializer(serializers.ModelSerializer):
     class Meta:

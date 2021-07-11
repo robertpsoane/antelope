@@ -5,7 +5,6 @@ import TurnRow from "./TurnRow";
 function TranscriptAsTable(props) {
   const fullTranscript = { ...props.transcript };
   const turns = fullTranscript.Transcript;
-  console.log(fullTranscript);
 
   return (
     <Table
