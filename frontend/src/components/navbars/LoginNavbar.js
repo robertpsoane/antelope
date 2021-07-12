@@ -13,15 +13,16 @@ import { homeRedirect } from "../../scripts/redirects";
 function LoginNavbar(props) {
   const [modalShow, setModalShow] = useState(false);
 
-  useEffect(() => {
-    async function processLoginStatus() {
-      // Async function to check if logged in - if logged in, redirect
-      // to home page
-      const response = await getLoginStatus();
-      if (response.login) {
-        homeRedirect();
-      }
+  async function processLoginStatus() {
+    // Async function to check if logged in - if logged in, redirect
+    // to home page
+    const response = await getLoginStatus();
+    if (response.login) {
+      homeRedirect();
     }
+  }
+
+  useEffect(() => {
     processLoginStatus();
   });
 

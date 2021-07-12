@@ -6,22 +6,14 @@ import NewLabellingButton from "./NewLabellingButton";
 function LabellingsEditDeck(props) {
   const [cards, setCards] = useState([]);
 
+  async function reloadNewCards() {
+    const response = await getAllClassAdmin();
+    setCards(response);
+  }
+
   useEffect(() => {
-    async function getSetLabellings() {
-      const response = await getAllClassAdmin();
-      setCards(response);
-    }
     getSetLabellings();
   }, []);
-
-  function reloadNewCards() {
-    async function getSetLabellings() {
-      const response = await getAllClassAdmin();
-      setCards(response);
-    }
-
-    getSetLabellings();
-  }
 
   return (
     <div>

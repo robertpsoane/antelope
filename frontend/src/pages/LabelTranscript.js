@@ -11,19 +11,7 @@ function LabelTranscript(props) {
   const [batch, setBatch] = useState({});
   const [turnNumber, setTurnNumber] = useState(null);
 
-  useEffect(() => {
-    async function getSetBatch() {
-      const response = await getTranscriptBatch(t_id);
-      if (response.NTurns == response.NextLabelling) {
-        finishedTranscript();
-      }
-      setBatch(response);
-      setTurnNumber(response.start);
-    }
-    getSetBatch();
-  }, []);
-
-  async function refreshBatch() {
+  async function getSetBatch() {
     const response = await getTranscriptBatch(t_id);
     if (response.NTurns == response.NextLabelling) {
       finishedTranscript();
@@ -32,11 +20,15 @@ function LabelTranscript(props) {
     setBatch(response);
   }
 
+  useEffect(() => {
+    getSetBatch();
+  }, []);
+
   async function incrementTurn() {
     if (turnNumber == batch.end) {
       // Batch finished
       const response = await postLabelledBatch(batch);
-      refreshBatch();
+      getSetBatch();
     } else {
       setTurnNumber(turnNumber + 1);
     }

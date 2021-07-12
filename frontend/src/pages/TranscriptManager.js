@@ -10,21 +10,14 @@ import { getTranscripts } from "../scripts/transcripts";
 function TranscriptManager(props) {
   const [transcripts, setTranscripts] = useState([]);
 
+  async function getSetTranscripts() {
+    const response = await getTranscripts();
+    setTranscripts(response);
+  }
+
   useEffect(() => {
-    async function getSetTranscripts() {
-      const response = await getTranscripts();
-      setTranscripts(response);
-    }
     getSetTranscripts();
   }, []);
-
-  function reloadTranscripts() {
-    async function getSetTranscripts() {
-      const response = await getTranscripts();
-      setTranscripts(response);
-    }
-    getSetTranscripts();
-  }
 
   return (
     <div>
@@ -34,7 +27,7 @@ function TranscriptManager(props) {
         </div>
         <div className="col-2">
           <div style={{ float: "right" }}>
-            <UploadTranscriptButton reloadTranscripts={reloadTranscripts} />
+            <UploadTranscriptButton reloadTranscripts={getSetTranscripts} />
           </div>
         </div>
       </div>
@@ -70,7 +63,7 @@ function TranscriptManager(props) {
                     date={transcript.UploadDate}
                     nturns={transcript.NTurns}
                     next={transcript.NextLabelling}
-                    reloadTranscripts={reloadTranscripts}
+                    reloadTranscripts={getSetTranscripts}
                   />
                 );
               }

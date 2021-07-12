@@ -5,11 +5,12 @@ import { getAllClass } from "../../scripts/labelling-classes-queries";
 function LabellingsViewDeck(props) {
   const [cards, setCards] = useState([]);
 
+  async function getSetLabellings() {
+    const response = await getAllClass();
+    setCards(response);
+  }
+
   useEffect(() => {
-    async function getSetLabellings() {
-      const response = await getAllClass();
-      setCards(response);
-    }
     getSetLabellings();
   }, []);
 

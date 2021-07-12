@@ -23,10 +23,6 @@ function ViewTranscript(props) {
     getSetTranscript();
   }, []);
 
-  function reloadTranscript() {
-    getSetTranscript();
-  }
-
   if (t_id == null) {
     window.location.pathname = "";
   } else if (transcript.TranscriptName == null) {
@@ -41,7 +37,7 @@ function ViewTranscript(props) {
         <div className="row">
           <TranscriptCard
             transcript={transcript}
-            reloadTranscript={() => reloadTranscript()}
+            reloadTranscript={getSetTranscript}
           />
         </div>
         <div style={{ marginTop: "10px" }}></div>
