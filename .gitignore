@@ -219,3 +219,8 @@ lerna-debug.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Transcripts file
+api/transcripts/*
+!api/transcripts/.gitkeep
+!api/transcripts/README.txt
