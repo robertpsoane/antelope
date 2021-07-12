@@ -2,16 +2,11 @@
 Login Help Modal function -  manages help for login on press of help 
 button
 */
-import React from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
 function LoginHelp(props) {
-  const [show, setShow] = React.useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
   return (
     <Modal
       {...props}

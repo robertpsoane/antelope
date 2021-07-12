@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, ProgressBar, Button } from "react-bootstrap";
+import SchemaModal from "./SchemaModal";
 
 function TranscriptTitleCard(props) {
+  const [modalShow, setModalShow] = useState(false);
+
   const title = props.batch.TranscriptName;
   const notes = props.batch.Notes;
   const currentTurn = props.turnNumber + 1;
@@ -14,7 +17,22 @@ function TranscriptTitleCard(props) {
   return (
     <Card>
       <Card.Header>
-        <Card.Title>{title}</Card.Title>
+        <div className="row">
+          <div className="col-8">
+            <Card.Title>{title}</Card.Title>
+          </div>
+          <div className="col-4">
+            <div style={{ float: "right" }}>
+              <Button
+                onClick={() => {
+                  setModalShow(true);
+                }}
+              >
+                Schema
+              </Button>
+            </div>
+          </div>
+        </div>
       </Card.Header>
       <Card.Body>{notes}</Card.Body>
       <Card.Footer>
@@ -35,6 +53,7 @@ function TranscriptTitleCard(props) {
           </div>
         </div>
       </Card.Footer>
+      <SchemaModal onHide={() => setModalShow(false)} show={modalShow} />
     </Card>
   );
 }

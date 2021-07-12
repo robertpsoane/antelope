@@ -3,25 +3,27 @@ import { getTranscriptByID } from "../scripts/transcripts";
 import { Spinner } from "react-bootstrap";
 import TranscriptCard from "../components/transcript_manager/TranscriptCard";
 import TranscriptAsTable from "../components/transcript_manager/TranscriptAsTable";
+import { homeRedirect } from "../scripts/redirects";
 
 function ViewTranscript(props) {
   const [transcript, setTranscript] = useState({});
   const t_id = props.transcript_id;
 
-  useEffect(() => {
-    async function getSetTranscript() {
-      const response = await getTranscriptByID(t_id);
-      console.log(response);
+  async function getSetTranscript() {
+    const response = await getTranscriptByID(t_id);
+    if (response.status == 200) {
       setTranscript(response);
+    } else {
+      // Forbidden - redirect to home
+      homeRedirect();
     }
+  }
+
+  useEffect(() => {
     getSetTranscript();
   }, []);
 
   function reloadTranscript() {
-    async function getSetTranscript() {
-      const response = await getTranscriptByID(t_id);
-      setTranscript(response);
-    }
     getSetTranscript();
   }
 

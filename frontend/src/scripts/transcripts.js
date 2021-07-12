@@ -26,7 +26,12 @@ export async function getTranscripts() {
 
 export async function getTranscriptByID(id) {
   const url = "/api/transcripts/" + id + "/";
-  const transcript = await fetch(url).then((result) => result.json());
+  const transcript = await fetch(url).then(async (result) => {
+    const status = result.status;
+    const response = await result.json();
+    response["status"] = status;
+    return response;
+  });
   return transcript;
 }
 
