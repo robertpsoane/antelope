@@ -12,7 +12,7 @@ function LabellingsEditDeck(props) {
   }
 
   useEffect(() => {
-    getSetLabellings();
+    reloadNewCards();
   }, []);
 
   return (

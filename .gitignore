@@ -224,3 +224,16 @@ Thumbs.db
 api/transcripts/*
 !api/transcripts/.gitkeep
 !api/transcripts/README.txt
+
+# Model Files
+api/al/model/*
+!api/al/model/.gitkeep
+
+api/al/model/training_data/*
+!api/al/model/training_data
+!api/al/model/training_data/.gitkeep
+
+# Embeddings Files
+api/al/model/embeddings/*
+!api/al/model/embeddings
+!api/al/model/embeddings/.gitkeep
