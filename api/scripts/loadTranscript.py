@@ -18,7 +18,15 @@ def loadTranscriptFromUsername(username, transcript_root, transcript_location):
     file_names = os.listdir(transcript_dir)
 
     # Finding latest version of filename
-    latest_file = str(max([int(file_name[:-5]) for file_name in file_names])) + ".json"
+    json_file_names = [
+        int(file_name.split(".")[0])
+        for file_name in file_names 
+        if 
+            (file_name.split(".")[1] == "json") 
+        and
+            (file_name.split(".")[0].isdigit())
+        ]
+    latest_file = str(max(json_file_names)) + ".json"
     transcript_loc = os.path.join(transcript_dir, latest_file)
     
     # Loading transcript

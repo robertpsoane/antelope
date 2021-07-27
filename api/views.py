@@ -1,3 +1,8 @@
+import pickle
+import threading
+import time
+
+
 from django.http import HttpResponse, FileResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -17,6 +22,7 @@ import os
 import hashlib
 import time
 from django.http import JsonResponse
+
 
 from .scripts.processTranscripts import transcript2list
 from .scripts.loadTranscript import (loadTranscript, 
@@ -408,11 +414,22 @@ def new_transcript(request):
     transcript_dir = os.path.join(user_transcripts, save_dir)
     os.mkdir(transcript_dir)
     json_location = os.path.join(transcript_dir, "0.json")
+    processed_location = os.path.join(transcript_dir, "process.json")
 
     transcript_document = transcript2list(transcript)
 
     with open(json_location, "w") as f:
         json.dump(transcript_document, f)
+
+    with open(processed_location, "w") as f:
+        json.dump({"processed":False}, f)
+
+    threading.Thread(
+        target=process_transcript,
+        name="Preprocess Transcript",
+        args=(transcript_document, transcript_dir, processed_location),
+        daemon=True
+    ).start()
 
     val_data = {
         "UserID": request.user,
@@ -427,6 +444,22 @@ def new_transcript(request):
     Serializer.create(val_data)
 
     return JsonResponse({"received":True})
+
+def process_transcript(transcript_document, transcript_dir, processed_location):
+    print(" >> Making transcript embeddings")
+    t0 = time.time()
+    embeddings = [
+        AL.embedding(turn["speech"]) for turn in transcript_document
+    ]
+    embeddings_location = os.path.join(transcript_dir, "0.pickle")
+    print(" >> Pickling transcript embeddings")
+    with open(embeddings_location, "wb") as f:
+        pickle.dump(embeddings, f)
+    with open(processed_location, "w") as f:
+        json.dump({"processed":True}, f)
+    processing_time =  time.time() - t0
+    print(f" >> Processed transript in {processing_time:.2f} seconds...")
+    
 
 
 
