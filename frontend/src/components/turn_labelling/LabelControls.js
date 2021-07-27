@@ -28,6 +28,8 @@ function LabelControls(props) {
     props.incrementTurn();
   }
 
+  var acronym_colour = {};
+
   return (
     <div className="row">
       <div className="col-8">
@@ -36,11 +38,13 @@ function LabelControls(props) {
             var schemaClass = schema[key];
             var levels = schemaClass.levels;
             var acronym = schemaClass.ClassShort;
+            var variant = COLOURS[idx];
+            acronym_colour[acronym] = variant;
             return (
               <DropdownButton
                 key={key}
                 id={key}
-                variant={COLOURS[idx]}
+                variant={variant}
                 title={acronym}
                 style={{ marginLeft: "5px", marginRight: "5px" }}
               >
@@ -68,7 +72,10 @@ function LabelControls(props) {
           Suggestion
           <Button
             style={{ marginLeft: "10px" }}
-            onClick={() => handleLabelling(prediction.class, prediction.level)}
+            variant={acronym_colour[schema[prediction.class].ClassShort]}
+            onClick={() =>
+              handleLabelling(prediction.class[0], prediction.level[0])
+            }
           >
             {schema[prediction.class].ClassShort}, {prediction.level}
           </Button>

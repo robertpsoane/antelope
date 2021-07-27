@@ -30,6 +30,9 @@ function Navbar(props) {
           <Route exact path="/modify_schema/">
             <MainNavbar page="none" />
           </Route>
+          <Route path="/label">
+            <MainNavbar page="label" />
+          </Route>
           <Route exact path="/">
             <MainNavbar page="transcripts" />
           </Route>

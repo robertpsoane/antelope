@@ -9,7 +9,7 @@ from .serializers import (TranscriptSerializer,
     LabellingSchemaLevelsSerializer, LabellingSchemaWithLevels) 
 from .permissions import IsOwner
 
-from .al.ActiveLearningInterface import ActiveLearningInterface
+from .apps import ActiveLearningInterface as AL
 # from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import json
@@ -165,9 +165,11 @@ class LabellingBatch(generics.RetrieveAPIView):
         )
         
         batch = transcript[start_idx:end_idx]
-        model = ActiveLearningInterface()
+        t0 = time.time()
         for turn in batch:
-            turn["prediction"] = model.predict(turn["speech"])
+            turn["prediction"] = AL.model.predict(turn["speech"])
+        prediction_time = time.time() - t0
+        print(f"Time to predict batch : {prediction_time}")
         response.data["batch"] = batch
 
         if start_idx != 0:
@@ -183,7 +185,6 @@ class LabellingBatch(generics.RetrieveAPIView):
         response.data["start"] = start_idx
         response.data["end"] = end_idx - 1
         response.data["schema"] = labelling_schema_as_list()
-        print(f"Sending {start_idx}")
 
         return response
 
@@ -208,8 +209,8 @@ def put_labelled_transcript(request):
     old_transcript = loadTranscriptFromUsername(username, TRANSCRIPTS_LOCATION,
                                                 transcript_location)
     new_transcript = data["batch"]
-    model = ActiveLearningInterface()
-    model.train(new_transcript)
+    
+    AL.model.train(new_transcript)
     start_idx = data["start"]
     end_idx = data["end"] + 1
     for idx in range(start_idx, end_idx):

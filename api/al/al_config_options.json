@@ -15,7 +15,7 @@
     }
   },
 
-  "levels": {
+  "label_levels": {
     "classifiers": {
       "SGDClassifier": {
         "loss": "hinge",
