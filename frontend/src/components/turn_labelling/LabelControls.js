@@ -16,6 +16,7 @@ function LabelControls(props) {
   const schema = props.schema;
   const turn = props.turn;
   const prediction = turn.prediction;
+
   const schemaKeys = Object.keys(schema);
 
   function handleLabelling(turnClass, level) {
@@ -36,6 +37,7 @@ function LabelControls(props) {
         <ButtonGroup>
           {schemaKeys.map((key, idx) => {
             var schemaClass = schema[key];
+            // console.log(schemaClass);
             var levels = schemaClass.levels;
             var acronym = schemaClass.ClassShort;
             var variant = COLOURS[idx];
@@ -73,9 +75,9 @@ function LabelControls(props) {
           <Button
             style={{ marginLeft: "10px" }}
             variant={acronym_colour[schema[prediction.class].ClassShort]}
-            onClick={() =>
-              handleLabelling(prediction.class[0], prediction.level[0])
-            }
+            onClick={() => {
+              handleLabelling(prediction.class[0], prediction.level[0]);
+            }}
           >
             {schema[prediction.class].ClassShort}, {prediction.level}
           </Button>

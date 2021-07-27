@@ -65,21 +65,32 @@ class ActiveLearningModel:
             "level": level_prediction
         }
     
-    def train(self, data): 
-        new_training_data = [
-            {
-                "speech": self.transform(instance["speech"])[0],
-                "class": int(instance["code"]["class"]),
-                "level": int(instance["code"]["level"])
-            } for instance in data
-        ]
-        
-        self.save_training_data(new_training_data)
-        self.n_new_samples += len(data)
+    def train(self, data):
+        """
+        Saves and trains data in new thread.  Using new thread to avoid
+        delaying response to client
+        """
+        def _train(self, data):
+            new_training_data = [
+                {
+                    "speech": self.transform(instance["speech"])[0],
+                    "class": int(instance["code"]["class"]),
+                    "level": int(instance["code"]["level"])
+                } for instance in data
+            ]
+            
+            self.save_training_data(new_training_data)
+            self.n_new_samples += len(data)
 
-        if self.n_new_samples >= self.retrain_rate:
-            self.n_new_samples = 0
-            self.train_now()
+            if self.n_new_samples >= self.retrain_rate:
+                self.n_new_samples = 0
+                self.train_now()
+        threading.Thread(
+            target=_train, 
+            name="Save Training Data - Train",
+            args=(self, data),
+            daemon=True
+        ).start()
 
     def save_training_data(self, new_training_data):
         training_data = self.training_data
@@ -94,7 +105,7 @@ class ActiveLearningModel:
         Function to call to train model in background
         """
         threading.Thread(
-                target=self.__train_now, name="TEST", daemon=True
+                target=self.__train_now, name="Train Now", daemon=True
             ).start()
 
     def __train_now(self):
