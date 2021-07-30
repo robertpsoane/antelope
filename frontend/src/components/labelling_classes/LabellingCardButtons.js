@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { ButtonGroup, Button } from "react-bootstrap";
 import { Pencil, XCircle } from "react-bootstrap-icons";
 import EditLabellingModal from "./EditLabellingModal";
-import DeleteModal from "./DeleteModal";
 
 function LabellingCardButtons(props) {
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   if (props.modify) {
     return (
@@ -20,14 +18,6 @@ function LabellingCardButtons(props) {
           >
             <Pencil />
           </Button>
-          <Button
-            variant="danger"
-            onClick={() => {
-              setShowDeleteModal(true);
-            }}
-          >
-            <XCircle />
-          </Button>
         </ButtonGroup>
         <EditLabellingModal
           onHide={() => setShowEditModal(false)}
@@ -40,17 +30,6 @@ function LabellingCardButtons(props) {
           reloadCards={() => {
             props.reloadCards();
             setShowEditModal(false);
-          }}
-        />
-        <DeleteModal
-          onHide={() => setShowDeleteModal(false)}
-          show={showDeleteModal}
-          id={props.id}
-          classname={props.classname}
-          short={props.short}
-          reloadCards={() => {
-            props.reloadCards();
-            setShowDeleteModal(false);
           }}
         />
       </div>

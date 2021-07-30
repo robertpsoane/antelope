@@ -1,3 +1,4 @@
+from api.al import embeddings
 import pickle
 import threading
 import time
@@ -25,24 +26,16 @@ from django.http import JsonResponse
 
 
 from .scripts.processTranscripts import transcript2list
-from .scripts.loadTranscript import (loadTranscript, 
+from .scripts.loadTranscript import (loadTranscript, loadEmbeddings, 
     loadTranscriptFromUsername, saveNewTranscript,
-    deleteTranscript, loadTranscriptAsCSV)
+    deleteTranscript, loadTranscriptAsCSV, loadTranscriptProcessingStatus)
 
 
 # Create your views here.
 
 MODULE_PATH = os.path.dirname(os.path.abspath(__file__))
 TRANSCRIPTS_LOCATION = os.path.join(MODULE_PATH, "transcripts")
-MODELCONFIG_LOCATION = os.path.join(
-    os.path.join(MODULE_PATH, ".."),
-    "modelconfig.json")
 
-## Load Config Data
-def load_config():
-    with open(MODELCONFIG_LOCATION) as f:
-        config = json.load(f)
-    return config
 
 # Defacto API view - doesn't do anything useful, just shows were on the 
 # right route
@@ -159,21 +152,37 @@ class LabellingBatch(generics.RetrieveAPIView):
     permission_classes = [IsOwner]
 
     def get(self, request, *args, **kwargs):
+        # TODO - add:
+        # processed_location = os.path.join(transcript_dir, "process.json")
+        # - Add check if processed, incorporate pickled training data
+    
         # Getting default response
         response = super().get(request, *args, **kwargs)
+        processed = loadTranscriptProcessingStatus(request, response, TRANSCRIPTS_LOCATION)
+        if not processed:
+            # If background processing isn't complete, return that it is
+            # incomplete
+            response.data["processed"] = False
+            return response
+
+        # Not returned - has been processed.  Load transcript and 
+        # embedded transcript, get labels for each embedding
+        response.data["processed"] = True
         transcript = loadTranscript(request, response, TRANSCRIPTS_LOCATION)
-        config_data = load_config()
+        embeddings = loadEmbeddings(request, response, TRANSCRIPTS_LOCATION)
+        config_data = AL.model.config
         n_turns = response.data["NTurns"]
         start_idx = response.data["NextLabelling"]
         end_idx = min(
-            start_idx + config_data["batchSize"],
+            start_idx + config_data["batch_size"],
             n_turns
-        )
-        
+            )
+    
         batch = transcript[start_idx:end_idx]
+        embeddings = embeddings[start_idx:end_idx]
         t0 = time.time()
-        for turn in batch:
-            turn["prediction"] = AL.model.predict(turn["speech"])
+        for idx, turn in enumerate(batch):
+            turn["prediction"] = AL.model.predict(embeddings[idx])
         prediction_time = time.time() - t0
         print(f"Time to predict batch : {prediction_time}")
         response.data["batch"] = batch
@@ -213,18 +222,28 @@ def put_labelled_transcript(request):
     username = request.user.username
     transcript_location = data["TranscriptLocation"]
     old_transcript = loadTranscriptFromUsername(username, TRANSCRIPTS_LOCATION,
-                                                transcript_location)
-    new_transcript = data["batch"]
+                                                transcript_location, "json")
     
-    AL.model.train(new_transcript)
+    new_transcript = data["batch"]
+
+    embeddings = loadTranscriptFromUsername(username, TRANSCRIPTS_LOCATION,
+                                                transcript_location, "pickle")
+    labelled_embeddings = []
+
+    
     start_idx = data["start"]
     end_idx = data["end"] + 1
     for idx in range(start_idx, end_idx):
         old_transcript[idx]["code"] = new_transcript[idx - start_idx]["code"]
+        labelled_embedding = {
+            "speech": embeddings[idx][0],
+            "class": old_transcript[idx]["code"]["class"],
+            "level": old_transcript[idx]["code"]["level"]
+        }
+        labelled_embeddings.append(labelled_embedding)
+        
+    AL.model.train(labelled_embeddings)
 
-        # Below two lines only needed if possibility of server side edits
-        # old_transcript["idx"]["speaker"] = new_transcript["idx"]["speaker"]
-        # old_transcript["idx"]["speech"] = new_transcript["idx"]["speech"]
 
     # Saving new transcript
     saveNewTranscript(old_transcript, username, TRANSCRIPTS_LOCATION, 
@@ -307,8 +326,26 @@ class LabellingSchemaInstanceEdit(generics.RetrieveUpdateDestroyAPIView):
 
 @require_http_methods(["POST"])
 @permission_classes([permissions.IsAdminUser])
+def post_model_config(request):
+    """ post_model_config
+    Gets new model config 
+    """
+    new_config = json.loads(request.body)
+    AL.model.config = new_config
+    return JsonResponse({"success":True})
+
+@require_http_methods(["GET"])
+@permission_classes([permissions.IsAdminUser])
+def get_model_config(request):
+    """ get_model_config
+    Gets model config
+    """
+    return JsonResponse(AL.model.config_options)
+
+@require_http_methods(["POST"])
+@permission_classes([permissions.IsAdminUser])
 def new_labelling_with_levels(request):
-    """ new_labelling_with_levels
+    """ new_labelling_with_levels 
     Adds a new labelling class, along with the corresponding levels from an
     api request
     """
@@ -421,8 +458,9 @@ def new_transcript(request):
     with open(json_location, "w") as f:
         json.dump(transcript_document, f)
 
+    processing_details = {"processed":False}
     with open(processed_location, "w") as f:
-        json.dump({"processed":False}, f)
+        json.dump(processing_details, f)
 
     threading.Thread(
         target=process_transcript,

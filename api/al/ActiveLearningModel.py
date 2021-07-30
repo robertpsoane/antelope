@@ -1,4 +1,6 @@
 import json, os
+
+import pprint
 import pickle
 
 import tensorflow as tf
@@ -15,7 +17,9 @@ import time
 import threading
 
 MODULE_PATH = os.path.dirname(os.path.abspath(__file__))
+CONFIG_OPTIONS_PATH = os.path.join(MODULE_PATH, "al_config_options.json")
 CONFIG_PATH = os.path.join(MODULE_PATH, "al_config.json")
+DEFUALT_CONFIG_PATH = os.path.join(MODULE_PATH, "_default_al_config.json")
 MODELS_PATH = os.path.join(MODULE_PATH, "model")
 TRAINING_DATA_PATH = os.path.join(
     os.path.join(MODELS_PATH, "training_data"),
@@ -30,36 +34,43 @@ EMBEDDING_MODEL_PATH = os.path.join(MODELS_PATH, "embeddings.model.h5")
 class ActiveLearningModel:
 
     def __init__(self):
+        new_model = False
         if os.path.isfile(CLASS_MODEL_PATH):
             self.load_class_model()
         else:
             self.make_class_model()
+            new_model = True
 
         if os.path.isfile(LEVEL_MODEL_PATH):
             self.load_level_model()
         else:
             self.make_level_model()
+            new_model = True
 
         if os.path.isfile(EMBEDDING_MODEL_PATH):
             self.load_embeddings_model()
         else:
             self.make_embeddings_model()
+        
+        if new_model:
+            self.train_if_possible()
+            
 
         self.get_n_new()
         
     def transform(self, text):
-        return self.embedding_model(tf.constant([text]))
+        transformed_tensor = tf.constant([text])
+        embedding_tensor = self.embedding_model(transformed_tensor)
+        return embedding_tensor
 
     def predict(self,turn):
-        turn_embedding = self.transform(turn)
         try:
-            class_prediction = self.class_model.predict(turn_embedding)
-            level_prediction = self.level_model.predict(turn_embedding)
+            class_prediction = self.class_model.predict(turn)
+            level_prediction = self.level_model.predict(turn)
         except NotFittedError:
             print(" >> No fitted models.  If this is prior to the first training you can safely ignore this message.  If not this may be an indication that the model has inadvertently been overwritten.")
             class_prediction = 1
-            level_prediction = 1
-
+            level_prediction = 0
         return {
             "class": class_prediction,
             "level": level_prediction
@@ -71,15 +82,11 @@ class ActiveLearningModel:
         delaying response to client
         """
         def _train(self, data):
-            new_training_data = [
-                {
-                    "speech": self.transform(instance["speech"])[0],
-                    "class": int(instance["code"]["class"]),
-                    "level": int(instance["code"]["level"])
-                } for instance in data
-            ]
-            
-            self.save_training_data(new_training_data)
+            """
+            Saves and trains model on data including new data. To be called 
+            in own thread
+            """
+            self.save_training_data(data)
             self.n_new_samples += len(data)
 
             if self.n_new_samples >= self.retrain_rate:
@@ -113,6 +120,7 @@ class ActiveLearningModel:
         # Asyncronously train copied models
         # Replace models with async-ly trained models
         print(" >> Starting training model")
+        t0 = time.time()
         training_data = self.training_data
         X = training_data["speech"]
         y_class = training_data["class"]
@@ -122,7 +130,8 @@ class ActiveLearningModel:
                                 self.class_model, X, y_class,"class")
         self.level_model = self.__train_specific_model_now(
                                 self.level_model, X, y_level,"level")
-        print (f" >> Finished training model")
+        training_time = time.time() - t0
+        print (f" >> Finished training model in {training_time:.2f} seconds")
         
     def __train_specific_model_now(self, model_name, X, y, name):
         print(f" >> Copying {name}")
@@ -136,18 +145,19 @@ class ActiveLearningModel:
         training_data = self.training_data
         if len(training_data["speech"]) > 0:
             self.train_now()
+            self.n_new_samples = 0
 
     def make_class_model(self):
         model_config = self.config["label_class"]
         self.class_model =  make_model(model_config)
         print(" >> New class model created")
-        self.train_if_possible()
+        
     
     def make_level_model(self):
         model_config = self.config["label_levels"]
         self.level_model =  make_model(model_config)
         print(" >> New level model created")
-        self.train_if_possible()
+        
 
     ###############################################
     # Getters and setters for data stored on disk #
@@ -209,7 +219,7 @@ class ActiveLearningModel:
         self.__n_new_samples = n
         config = self.config
         config["n_new"] = n
-
+        # Save new config without re-training
         self.__save_config_json(config)
         
 
@@ -222,7 +232,18 @@ class ActiveLearningModel:
         self.__retrain_rate = rate
     
     @property
+    def config_options(self):
+        with open(CONFIG_OPTIONS_PATH) as f:
+            options = json.load(f)
+        options["current_config"] = self.config    
+        return options
+
+    @property
     def config(self):
+        if not os.path.isfile(CONFIG_PATH):
+            with open(DEFUALT_CONFIG_PATH) as f:
+                default_config = json.load(f)
+            self.config = default_config
         with open(CONFIG_PATH) as f:
             config = json.load(f)
         self.retrain_rate = config["retrain_rate"]
@@ -230,18 +251,26 @@ class ActiveLearningModel:
 
     @config.setter
     def config(self, new_config):
+        print(" >> Setting new config file")
         self.retrain_rate = new_config["retrain_rate"]
-        
+        new_config["n_new"] = 0
+        print(" >> Config saved")
         self.__save_config_json(new_config)
         
         # Make new models with new config data
+       
+        print(">> Making new class prediciton model")
         self.make_class_model()
+        print(">> Making new level prediciton model")
         self.make_level_model()
+        print(">> Training model if possible")
+        self.train_if_possible()
 
     def __save_config_json(self, config):
         # Update config data
         with open(CONFIG_PATH, "w") as f:
             json.dump(config, f)
+        
 
     @property
     def training_data(self):

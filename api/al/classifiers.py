@@ -55,5 +55,4 @@ def make_model(model_params):
         model = make_sgd(model_params["params"])
     else:
         raise TypeError("Model not implemented.")
-    
     return model

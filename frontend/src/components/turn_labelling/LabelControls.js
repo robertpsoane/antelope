@@ -37,7 +37,7 @@ function LabelControls(props) {
         <ButtonGroup>
           {schemaKeys.map((key, idx) => {
             var schemaClass = schema[key];
-            // console.log(schemaClass);
+
             var levels = schemaClass.levels;
             var acronym = schemaClass.ClassShort;
             var variant = COLOURS[idx];

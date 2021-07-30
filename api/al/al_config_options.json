@@ -2,32 +2,87 @@
   "label_class": {
     "classifiers": {
       "SGDClassifier": {
-        "loss": "hinge",
-        "penalty": "l2",
-        "eta0": 0.1,
-        "alpha": 0.0001,
-        "learning_rate": "adaptive"
+        "loss": {
+          "type": "string",
+          "default": "hinge",
+          "range": [
+            "hinge",
+            "log",
+            "modified_huber",
+            "squared_hinge",
+            "perceptron"
+          ]
+        },
+        "penalty": {
+          "type": "string",
+          "default": "l2",
+          "range": ["l2", "l1", "elasticnet", null]
+        },
+        "eta0": {
+          "type": "float",
+          "default": 0.1,
+          "range": [0.001, 1]
+        },
+        "alpha": {
+          "type": "float",
+          "default": 0.0001,
+          "range": [0, 100]
+        },
+        "learning_rate": {
+          "type": "string",
+          "default": "adaptive",
+          "range": ["constant", "optimal", "invscaling", "adaptive"]
+        }
       }
-    },
-    "defaults": {
-      "classifier": "SGDClassifier",
-      "retrain_rate": 1000
     }
   },
-
   "label_levels": {
     "classifiers": {
       "SGDClassifier": {
-        "loss": "hinge",
-        "penalty": null,
-        "eta0": 0.01,
-        "alpha": 0.001,
-        "learning_rate": "adaptive"
+        "loss": {
+          "type": "string",
+          "default": "hinge",
+          "range": [
+            "hinge",
+            "log",
+            "modified_huber",
+            "squared_hinge",
+            "perceptron"
+          ]
+        },
+        "penalty": {
+          "type": "string",
+          "default": null,
+          "range": ["l2", "l1", "elasticnet", null]
+        },
+        "eta0": {
+          "type": "float",
+          "default": 0.01,
+          "range": [0.001, 1]
+        },
+        "alpha": {
+          "type": "float",
+          "default": 0.001,
+          "range": [0, 100]
+        },
+        "learning_rate": {
+          "type": "string",
+          "default": "adaptive",
+          "range": ["constant", "optimal", "invscaling", "adaptive"]
+        }
       }
+    }
+  },
+  "training_params": {
+    "retrain_rate": {
+      "type": "float",
+      "range": [0, 10000],
+      "description": "retrain rate"
     },
-    "defaults": {
-      "classifier": "SGDClassifier",
-      "retrain_rate": 1000
+    "batch_size": {
+      "type": "float",
+      "range": [0, 100],
+      "description": "batch Size"
     }
   }
 }

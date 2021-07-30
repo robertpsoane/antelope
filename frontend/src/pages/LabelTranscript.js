@@ -5,19 +5,29 @@ import TurnCard from "../components/turn_labelling/TurnCard";
 import AdjacentCard from "../components/turn_labelling/AdjacentCard";
 import TranscriptTitleCard from "../components/turn_labelling/TranscriptTitleCard";
 import { Spinner } from "react-bootstrap";
+import TranscriptProcesssingCard from "../components/turn_labelling/TranscriptProcessingCard";
 
 function LabelTranscript(props) {
   const t_id = props.transcript_id;
   const [batch, setBatch] = useState({});
   const [turnNumber, setTurnNumber] = useState(null);
 
-  async function getSetBatch() {
+  async function getBatch() {
     const response = await getTranscriptBatch(t_id);
     if (response.NTurns == response.NextLabelling) {
       finishedTranscript();
     }
+    return response;
+  }
+
+  function setTurnBatch(response) {
     setTurnNumber(response.start);
     setBatch(response);
+  }
+
+  async function getSetBatch() {
+    const response = await getBatch();
+    setTurnBatch(response);
   }
 
   useEffect(() => {
@@ -52,7 +62,7 @@ function LabelTranscript(props) {
         <span className="visually-hidden">Loading...</span>
       </Spinner>
     );
-  } else {
+  } else if (batch.processed) {
     return (
       <div>
         <div id="title">
@@ -70,6 +80,21 @@ function LabelTranscript(props) {
             incrementTurn={incrementTurn}
           />
           <AdjacentCard turnNumber={turnNumber + 1} batch={batch} />
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <div id="title">
+          <TranscriptTitleCard batch={batch} />
+        </div>
+        <div id="body">
+          <TranscriptProcesssingCard
+            batch={batch}
+            getBatch={getBatch}
+            setBatch={(res) => setTurnBatch(res)}
+          />
         </div>
       </div>
     );

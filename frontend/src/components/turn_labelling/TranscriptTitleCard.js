@@ -9,6 +9,16 @@ function TranscriptTitleCard(props) {
   const title = props.batch.TranscriptName;
   const notes = props.batch.Notes;
 
+  function BatchTurnCounter() {
+    if (props.turnNumber != null) {
+      return (
+        <TitleCardFooter turnNumber={props.turnNumber} batch={props.batch} />
+      );
+    } else {
+      return <div></div>;
+    }
+  }
+
   return (
     <Card>
       <Card.Header>
@@ -30,7 +40,7 @@ function TranscriptTitleCard(props) {
         </div>
       </Card.Header>
       <Card.Body>{notes}</Card.Body>
-      <TitleCardFooter turnNumber={props.turnNumber} batch={props.batch} />
+      <BatchTurnCounter />
       <SchemaModal onHide={() => setModalShow(false)} show={modalShow} />
     </Card>
   );

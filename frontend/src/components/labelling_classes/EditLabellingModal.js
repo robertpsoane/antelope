@@ -90,7 +90,8 @@ function EditLabellingModal(props) {
                     label={l}
                     name={l}
                     id={"level" + l}
-                    defaultChecked
+                    checked
+                    readOnly
                   />
                 );
               } else {

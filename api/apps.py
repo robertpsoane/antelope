@@ -8,3 +8,4 @@ class ApiConfig(AppConfig):
 class ActiveLearningInterface:
     model = Model()
     embedding = model.transform
+    

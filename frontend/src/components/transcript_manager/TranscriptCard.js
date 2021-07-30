@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Card, Button, ButtonGroup, Modal, Form } from "react-bootstrap";
 import { Collection, Download, XCircle, Pencil } from "react-bootstrap-icons";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import {
   updateTranscriptMetadata,
   downloadTranscript,
@@ -95,28 +96,48 @@ function TranscriptCard(props) {
           <div className="col-4">
             <div style={{ float: "right" }}>
               <ButtonGroup>
-                <Button variant="success" href={label_url}>
-                  <Collection />
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    downloadTranscript(transcript_id);
-                  }}
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>Label</Tooltip>}
                 >
-                  <Download />
-                </Button>
-                <Button variant="warning" onClick={() => setShowModal(true)}>
-                  <Pencil />
-                </Button>
-                <Button
-                  className="btn-danger"
-                  onClick={() => {
-                    setShowDeleteModal(true);
-                  }}
+                  <Button variant="success" href={label_url}>
+                    <Collection />
+                  </Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>Download</Tooltip>}
                 >
-                  <XCircle />
-                </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      downloadTranscript(transcript_id);
+                    }}
+                  >
+                    <Download />
+                  </Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>Edit</Tooltip>}
+                >
+                  <Button variant="warning" onClick={() => setShowModal(true)}>
+                    <Pencil />
+                  </Button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>Delete</Tooltip>}
+                >
+                  <Button
+                    className="btn-danger"
+                    onClick={() => {
+                      setShowDeleteModal(true);
+                    }}
+                  >
+                    <XCircle />
+                  </Button>
+                </OverlayTrigger>
               </ButtonGroup>
             </div>
           </div>

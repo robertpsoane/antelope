@@ -21,7 +21,7 @@ from .views import (default_api, test_api, TranscriptListView, LabellingSchemaLi
     LabellingSchemaWithLevelsListView, LabellingSchemaWithLevelsInstanceView, 
     LabellingSchemaInstanceEdit, LabellingSchemaWithLevelsListViewAdmin,
     new_transcript, update_transcript_metadata, LabellingBatch, put_labelled_transcript,
-    TranscriptDownload)
+    TranscriptDownload, post_model_config, get_model_config)
 
 urlpatterns = [
     path('test/', test_api),
@@ -46,5 +46,8 @@ urlpatterns = [
     path('auth_logout/', user_logout),
     path('auth_check/', get_login_data),
     path('change_pass/', change_password),
+    path('new_model_config/', post_model_config),
+    path('get_model_config/', get_model_config),
     path('', default_api)
 ]
+

@@ -9,5 +9,6 @@ urlpatterns = [
     path('login/', views.index),
     path('modify_schema/', views.index),
     path('view/<int:path_name>/', views.index),
-    path('label/<int:path_name>/', views.index)
+    path('label/<int:path_name>/', views.index),
+    path('setup/', views.index)
 ]

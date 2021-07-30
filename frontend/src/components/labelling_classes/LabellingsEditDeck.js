@@ -30,7 +30,10 @@ function LabellingsEditDeck(props) {
         </div>
       </div>
       <div className="row">
-        <p>Labelling classes can be added and modified on this page.</p>
+        <p>
+          Labelling classes can be added and modified on this page. Please note{" "}
+          that labels classes cannot be deleted after creation.
+        </p>
       </div>
       {cards.map((card, i) => {
         return (
