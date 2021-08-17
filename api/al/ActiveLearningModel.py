@@ -28,12 +28,13 @@ TRAINING_DATA_PATH = os.path.join(
 
 CLASS_MODEL_PATH = os.path.join(MODELS_PATH, "class.model.pickle")
 LEVEL_MODEL_PATH = os.path.join(MODELS_PATH, "level.model.pickle")
-EMBEDDING_MODEL_PATH = os.path.join(MODELS_PATH, "embeddings.model.h5")
+EMBEDDING_MODEL_PATH = os.path.join(MODELS_PATH, "embeddings.model")
 
 
 class ActiveLearningModel:
 
     def __init__(self):
+        print(">> LOADING ACTIVE LEARNING MODEL")
         new_model = False
         if os.path.isfile(CLASS_MODEL_PATH):
             self.load_class_model()
@@ -47,7 +48,7 @@ class ActiveLearningModel:
             self.make_level_model()
             new_model = True
 
-        if os.path.isfile(EMBEDDING_MODEL_PATH):
+        if os.path.isdir(EMBEDDING_MODEL_PATH):
             self.load_embeddings_model()
         else:
             self.make_embeddings_model()
