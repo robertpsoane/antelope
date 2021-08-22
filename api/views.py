@@ -1,7 +1,9 @@
+from api.al.ActiveLearningModel import MODELS_PATH
 from api.al import embeddings
 import pickle
 import threading
 import time
+from datetime import date
 
 
 from django.http import HttpResponse, FileResponse
@@ -24,6 +26,8 @@ import hashlib
 import time
 from django.http import JsonResponse
 
+import random
+
 
 from .scripts.processTranscripts import transcript2list
 from .scripts.loadTranscript import (loadTranscript, loadEmbeddings, 
@@ -31,12 +35,44 @@ from .scripts.loadTranscript import (loadTranscript, loadEmbeddings,
     deleteTranscript, loadTranscriptAsCSV, loadTranscriptProcessingStatus)
 
 
-# Create your views here.
-
 MODULE_PATH = os.path.dirname(os.path.abspath(__file__))
 TRANSCRIPTS_LOCATION = os.path.join(MODULE_PATH, "transcripts")
 
+# Logging controls - saves basic stats of each labelling to log file 
+# if True
+LOGGING = True
+LOGGING_LOCATION = os.path.join(os.path.join(MODULE_PATH, ".."), "logs")
 
+# Experimental Mode
+# If true, will switch between random and model based recommendations
+EXPERIMENTAL = True
+if EXPERIMENTAL:
+    LOGGING = True
+MODEL = ["model"]
+    
+def random_predict(input):
+    schema = labelling_schema_as_list()
+    classes = list(schema.keys())
+    class_val = random.choice(classes)
+    level_val = random.choice(schema[class_val]["levels"])
+    random_predict = {'class': [str(class_val)], 'level': [str(level_val)]}
+    return random_predict
+
+def experimental_predict(input):
+    """
+    Makes predictions for experiments.  Note - if "model", uses random
+    predict, if "random" uses model predict - both ways, it switches 
+    labels for next time.  This is to ensure label matches actual model
+    """
+    if MODEL[0] == "model":
+        prediction = random_predict(input)
+        MODEL[0] = "random"
+    else:
+        prediction = AL.model.predict(input)
+        MODEL[0] = "model"
+    return prediction
+
+    
 # Defacto API view - doesn't do anything useful, just shows were on the 
 # right route
 def default_api(request):
@@ -44,6 +80,10 @@ def default_api(request):
 
 def test_api(request):
     return HttpResponse("scratchpad api didn't fail")
+
+def append(path, text):
+    with open(path, "a") as f:
+            f.write(f"\n{text}")
 
 ###############
 # Login Views #
@@ -182,7 +222,12 @@ class LabellingBatch(generics.RetrieveAPIView):
         embeddings = embeddings[start_idx:end_idx]
         t0 = time.time()
         for idx, turn in enumerate(batch):
-            turn["prediction"] = AL.model.predict(embeddings[idx])
+            if EXPERIMENTAL:
+                turn["prediction"] = experimental_predict(embeddings[idx])
+            else:
+                turn["prediction"] = AL.model.predict(embeddings[idx])
+                print(turn["prediction"])
+            
         prediction_time = time.time() - t0
         print(f"Time to predict batch : {prediction_time}")
         response.data["batch"] = batch
@@ -203,19 +248,47 @@ class LabellingBatch(generics.RetrieveAPIView):
 
         return response
 
+def log_data(data):
+    today = date.today().strftime("%d-%m-%Y")
+    if not os.path.isdir(LOGGING_LOCATION):
+        # If no logging directory, make new directory
+        os.mkdir(LOGGING_LOCATION)
+    
+    #  Access todays log file
+    file_name = os.path.join(LOGGING_LOCATION, f"{today}.log")
+    if not os.path.isfile(file_name):
+        #  If new, create file and setup title
+        with open(file_name, "w") as f:
+            f.write(f"Log {today}\n")
+    
+    for turn in data["batch"]:
+        t = time.localtime()
+        time_now = time.strftime("%H:%M:%S", t)
+        model_type = MODEL[0]
+        time_ = turn["code"]["time"]
+        class_ = turn["prediction"]["class"] == turn["code"]["class"]
+        level_ = turn["prediction"]["level"] == turn["code"]["level"]
+        nwords = len(turn["speech"].split(" "))
+        nchar = len(turn["speech"])
+        log = f"{time_now}: Model Type - {model_type}, Turn Length (words) - {nwords}, Turn Length (characters) - {nchar}, Accurate Class - {class_}, Accurate Level - {level_}, Time (ms) - {time_}"
+        append(file_name, log)
+
 
 @permission_classes([permissions.IsAuthenticated])
 @require_http_methods(["PUT"])
 def put_labelled_transcript(request):
     data = json.loads(request.body)
     
+    if LOGGING:
+        log_data(data)
+
     # Updating record in db with new NextLabelling
     instance = Transcripts.objects.get(pk=data["id"])
     Serializer = TranscriptSerializer()
     validated_data = {
         "NextLabelling": data["NextLabelling"] + len(data["batch"])
     }
-    print(instance)
+    
     serialized = Serializer.update(instance, validated_data)
 
     # Loading transcript

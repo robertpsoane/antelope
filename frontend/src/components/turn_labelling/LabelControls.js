@@ -19,13 +19,18 @@ function LabelControls(props) {
 
   const schemaKeys = Object.keys(schema);
 
+  var date = new Date();
+  const loadTime = date.getTime();
+
   function handleLabelling(turnClass, level) {
+    var date = new Date();
+    const labelTime = date.getTime() - loadTime;
     const label = {
       class: turnClass,
       level: level,
+      time: labelTime,
     };
     turn.code = label;
-
     props.incrementTurn();
   }
 
@@ -42,6 +47,8 @@ function LabelControls(props) {
             var acronym = schemaClass.ClassShort;
             var variant = COLOURS[idx];
             acronym_colour[acronym] = variant;
+
+            // console.log(key);
             return (
               <DropdownButton
                 key={key}
@@ -51,6 +58,7 @@ function LabelControls(props) {
                 style={{ marginLeft: "5px", marginRight: "5px" }}
               >
                 {levels.map((val, _) => {
+                  // console.log(val);
                   var dropdown = val;
                   if (val > 0) {
                     dropdown = "+" + dropdown;
@@ -76,7 +84,9 @@ function LabelControls(props) {
             style={{ marginLeft: "10px" }}
             variant={acronym_colour[schema[prediction.class].ClassShort]}
             onClick={() => {
-              handleLabelling(prediction.class[0], prediction.level[0]);
+              console.log(prediction.class);
+              console.log(prediction.level);
+              handleLabelling(prediction.class, prediction.level);
             }}
           >
             {schema[prediction.class].ClassShort}, {prediction.level}

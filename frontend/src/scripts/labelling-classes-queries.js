@@ -185,10 +185,10 @@ const CICS = [
 ];
 
 export async function autoLoadCICS() {
-  var res;
+  var response;
   for (const cics_key in CICS) {
     const data = CICS[cics_key];
-    res = await postNewClass(data);
+    response = await postNewClass(data);
   }
-  return { res };
+  return { response };
 }
