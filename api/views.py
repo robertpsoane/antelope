@@ -226,7 +226,7 @@ class LabellingBatch(generics.RetrieveAPIView):
                 turn["prediction"] = experimental_predict(embeddings[idx])
             else:
                 turn["prediction"] = AL.model.predict(embeddings[idx])
-                print(turn["prediction"])
+                # print(turn["prediction"])
             
         prediction_time = time.time() - t0
         print(f"Time to predict batch : {prediction_time}")

@@ -8,7 +8,7 @@ from tensorflow import keras
 import tensorflow_hub as hub
 
 from sklearn.exceptions import NotFittedError
-
+import numpy as np
 from .classifiers import make_model
 from .embeddings import compile_bert
 
