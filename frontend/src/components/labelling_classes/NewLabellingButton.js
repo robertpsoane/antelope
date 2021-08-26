@@ -3,30 +3,37 @@ import React, { useState } from "react";
 import { ButtonGroup, Button } from "react-bootstrap";
 
 import NewLabellingModal from "./NewLabellingModal";
-import { autoLoadCICS } from "../../scripts/labelling-classes-queries";
+import UploadSchemaModal from "./UploadSchemaModal";
 
 function NewLabellingButton(props) {
-  const [modalShow, setModalShow] = useState(false);
-
-  async function handleCICSButton() {
-    await autoLoadCICS();
-    props.reloadCards();
-  }
+  const [newLabelModalShow, setNewLabelModalShow] = useState(false);
+  const [uploadSchemaModalShow, setUploadSchemaModalShow] = useState(false);
 
   return (
     <div>
       <ButtonGroup className="float-end">
-        <Button onClick={() => setModalShow(true)}>New Class</Button>
-        <Button className="btn-secondary" onClick={handleCICSButton}>
-          Load CICS
+        <Button onClick={() => setNewLabelModalShow(true)}>New Class</Button>
+        <Button
+          className="btn-secondary"
+          onClick={() => setUploadSchemaModalShow(true)}
+        >
+          Upload Schema
         </Button>
       </ButtonGroup>
       <NewLabellingModal
-        onHide={() => setModalShow(false)}
-        show={modalShow}
+        onHide={() => setNewLabelModalShow(false)}
+        show={newLabelModalShow}
         reloadCards={() => {
           props.reloadCards();
-          setModalShow(false);
+          setNewLabelModalShow(false);
+        }}
+      />
+      <UploadSchemaModal
+        onHide={() => setUploadSchemaModalShow(false)}
+        show={uploadSchemaModalShow}
+        reloadCards={() => {
+          props.reloadCards();
+          setUploadSchemaModalShow(false);
         }}
       />
     </div>

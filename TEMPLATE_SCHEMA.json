@@ -1,0 +1,16 @@
+{
+  "schema": [
+    {
+      "name": "[Name Goes Here]",
+      "short": "NGH",
+      "description": "The name goes in the name field, an acronym of 3 letters in the acronym, and the description here.  Put the levels in the levels field as below.",
+      "levels": [-1, 0, 1]
+    },
+    {
+      "name": "Put as many as you like!",
+      "short": "PAL",
+      "description": "Put as many of these structures as you like, one for each class",
+      "levels": [-1, 0, 1]
+    }
+  ]
+}
