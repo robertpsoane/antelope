@@ -1,5 +1,16 @@
 import Cookies from "universal-cookie";
 
+export const COLOURS = [
+  "primary",
+  "secondary",
+  "success",
+  "info",
+  "warning",
+  "danger",
+  "light",
+  "dark",
+];
+
 export async function getTranscriptBatch(transcript_id) {
   const url = "/api/label_transcript/" + transcript_id + "/";
   const response = await fetch(url).then((result) => result.json());

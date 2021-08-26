@@ -7,6 +7,7 @@ import {
   downloadTranscript,
 } from "../../scripts/transcripts";
 import DeleteTranscriptModal from "./DeleteTranscriptModal";
+import TranscriptStats from "./TranscriptStats";
 
 function MetadataModal(props) {
   var {
@@ -143,7 +144,11 @@ function TranscriptCard(props) {
           </div>
         </div>
       </Card.Header>
-      <Card.Body>{transcript_meta.Notes}</Card.Body>
+      <Card.Body>
+        {transcript_meta.Notes}
+        <hr />
+        <TranscriptStats transcript={transcript_meta} />
+      </Card.Body>
       <Card.Footer>
         Uploaded on {transcript_meta.UploadDate} at{" "}
         {transcript_meta.UploadTime.split(".")[0]}

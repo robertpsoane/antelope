@@ -1,28 +1,20 @@
 import React from "react";
 import { Button, ButtonGroup, Dropdown, DropdownButton } from "react-bootstrap";
-
-const COLOURS = [
-  "primary",
-  "secondary",
-  "success",
-  "info",
-  "warning",
-  "danger",
-  "light",
-  "dark",
-];
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { COLOURS } from "../../scripts/labelling";
 
 function LabelControls(props) {
   const schema = props.schema;
   const turn = props.turn;
   const prediction = turn.prediction;
-
+  console.log(prediction);
   const schemaKeys = Object.keys(schema);
 
   var date = new Date();
   const loadTime = date.getTime();
 
   function handleLabelling(turnClass, level) {
+    console.log(turnClass, level);
     var date = new Date();
     const labelTime = date.getTime() - loadTime;
     const label = {
@@ -40,39 +32,45 @@ function LabelControls(props) {
     <div className="row">
       <div className="col-8">
         <ButtonGroup>
-          {schemaKeys.map((key, idx) => {
-            var schemaClass = schema[key];
+          {schemaKeys.map((labelKey, idx) => {
+            var schemaClass = schema[labelKey];
 
             var levels = schemaClass.levels;
             var acronym = schemaClass.ClassShort;
+            var name = schemaClass.ClassName;
             var variant = COLOURS[idx];
             acronym_colour[acronym] = variant;
 
             // console.log(key);
             return (
-              <DropdownButton
-                key={key}
-                id={key}
-                variant={variant}
-                title={acronym}
-                style={{ marginLeft: "5px", marginRight: "5px" }}
+              <OverlayTrigger
+                placement="auto"
+                overlay={<Tooltip>{name}</Tooltip>}
               >
-                {levels.map((val, _) => {
-                  // console.log(val);
-                  var dropdown = val;
-                  if (val > 0) {
-                    dropdown = "+" + dropdown;
-                  }
-                  return (
-                    <Dropdown.Item
-                      key={acronym + val}
-                      onClick={() => handleLabelling(key, val)}
-                    >
-                      {dropdown}
-                    </Dropdown.Item>
-                  );
-                })}
-              </DropdownButton>
+                <DropdownButton
+                  key={labelKey}
+                  id={labelKey}
+                  variant={variant}
+                  title={acronym}
+                  style={{ marginLeft: "5px", marginRight: "5px" }}
+                >
+                  {levels.map((val, _) => {
+                    // console.log(val);
+                    var dropdown = val;
+                    if (val > 0) {
+                      dropdown = "+" + dropdown;
+                    }
+                    return (
+                      <Dropdown.Item
+                        key={acronym + val}
+                        onClick={() => handleLabelling(parseInt(labelKey), val)}
+                      >
+                        {dropdown}
+                      </Dropdown.Item>
+                    );
+                  })}
+                </DropdownButton>
+              </OverlayTrigger>
             );
           })}
         </ButtonGroup>
@@ -84,8 +82,6 @@ function LabelControls(props) {
             style={{ marginLeft: "10px" }}
             variant={acronym_colour[schema[prediction.class].ClassShort]}
             onClick={() => {
-              console.log(prediction.class);
-              console.log(prediction.level);
               handleLabelling(prediction.class, prediction.level);
             }}
           >

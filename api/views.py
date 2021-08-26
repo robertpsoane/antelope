@@ -40,12 +40,12 @@ TRANSCRIPTS_LOCATION = os.path.join(MODULE_PATH, "transcripts")
 
 # Logging controls - saves basic stats of each labelling to log file 
 # if True
-LOGGING = True
+LOGGING = False
 LOGGING_LOCATION = os.path.join(os.path.join(MODULE_PATH, ".."), "logs")
 
 # Experimental Mode
 # If true, will switch between random and model based recommendations
-EXPERIMENTAL = True
+EXPERIMENTAL = False
 if EXPERIMENTAL:
     LOGGING = True
 MODEL = ["model"]

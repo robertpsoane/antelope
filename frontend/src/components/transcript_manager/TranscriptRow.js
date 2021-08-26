@@ -1,6 +1,6 @@
 import React from "react";
-import { ProgressBar } from "react-bootstrap";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import TranscriptProgressBar from "./TranscriptProgressBar";
+
 import TranscriptRowButton from "./TranscriptRowButton";
 
 function TranscriptRow(props) {
@@ -9,22 +9,7 @@ function TranscriptRow(props) {
       <td>{props.name}</td>
       <td>{props.notes}</td>
       <td>
-        <OverlayTrigger
-          placement="top"
-          overlay={
-            <Tooltip>
-              {props.next}/{props.nturns}
-            </Tooltip>
-          }
-        >
-          <ProgressBar
-            variant="success"
-            now={props.next}
-            min="0"
-            max={props.nturns}
-            height="100%"
-          />
-        </OverlayTrigger>
+        <TranscriptProgressBar now={props.next} max={props.nturns} string="" />
       </td>
       <td>{props.date}</td>
       <td>

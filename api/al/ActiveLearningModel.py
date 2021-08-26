@@ -1,5 +1,7 @@
 import json, os
 
+# os.environ["TFHUB_MODEL_LOAD_FORMAT"] = "UNCOMPRESSED"
+
 import pprint
 import pickle
 
@@ -66,8 +68,8 @@ class ActiveLearningModel:
 
     def predict(self,turn):
         try:
-            class_prediction = self.class_model.predict(turn)
-            level_prediction = self.level_model.predict(turn)
+            class_prediction = self.class_model.predict(turn)[0]
+            level_prediction = self.level_model.predict(turn)[0]
         except NotFittedError:
             print(" >> No fitted models.  If this is prior to the first training you can safely ignore this message.  If not this may be an indication that the model has inadvertently been overwritten.")
             class_prediction = 1
@@ -76,7 +78,7 @@ class ActiveLearningModel:
             "class": class_prediction,
             "level": level_prediction
         }
-    
+
     def train(self, data):
         """
         Saves and trains data in new thread.  Using new thread to avoid
@@ -103,10 +105,14 @@ class ActiveLearningModel:
     def save_training_data(self, new_training_data):
         training_data = self.training_data
         for td in new_training_data:
+            class_out = td["class"]
+            # print(f"Individual Class - {class_out}")
             training_data["speech"].append(td["speech"])
             training_data["class"].append(td["class"])
             training_data["level"].append(td["level"])
         self.training_data = training_data
+        class_out = training_data["class"]
+        # print(f"Training Data Classes- {class_out}")
 
     def train_now(self):
         """
@@ -170,8 +176,8 @@ class ActiveLearningModel:
     def load_embeddings_model(self):
         print(" >> Loading embeddings model")
         self.embedding_model = keras.models.load_model(
-            EMBEDDING_MODEL_PATH, 
-            custom_objects={'KerasLayer':hub.KerasLayer}
+            EMBEDDING_MODEL_PATH
+            # custom_objects={'KerasLayer':hub.KerasLayer}
             )
         print(" >> Embeddings model loaded")
 
@@ -179,7 +185,7 @@ class ActiveLearningModel:
     def make_embeddings_model(self):
         model = compile_bert()
         print(" >> Saving new embeddings model")
-        model.save(EMBEDDING_MODEL_PATH)
+        model.save(EMBEDDING_MODEL_PATH, include_optimizer=False)
         self.embedding_model = model
         
     
