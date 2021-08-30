@@ -126,27 +126,32 @@ export async function deleteClass(id) {
 
 export function verifySchema(schema) {
   var schemaIsVerified = true;
-  schema.forEach((element) => {
-    var name = typeof element.name;
-    var short = typeof element.short;
-    var description = typeof element.description;
+  try {
+    //  If there are any errors in the forEach, the format is clearly wrong
+    schema.forEach((element) => {
+      var name = typeof element.name;
+      var short = typeof element.short;
+      var description = typeof element.description;
 
-    if ((name == short) & (name == description) & (name == "string")) {
-      // All strings - fine!
-    } else {
-      schemaIsVerified = false;
-    }
-    var levels = element.levels;
-    if (typeof levels == "object") {
-      levels.forEach((list_element) => {
-        if (typeof list_element != "number") {
-          schemaIsVerified = false;
-        }
-      });
-    } else {
-      schemaIsVerified = false;
-    }
-  });
+      if ((name == short) & (name == description) & (name == "string")) {
+        // All strings - fine!
+      } else {
+        schemaIsVerified = false;
+      }
+      var levels = element.levels;
+      if (typeof levels == "object") {
+        levels.forEach((list_element) => {
+          if (typeof list_element != "number") {
+            schemaIsVerified = false;
+          }
+        });
+      } else {
+        schemaIsVerified = false;
+      }
+    });
+  } catch {
+    schemaIsVerified = false;
+  }
   return schemaIsVerified;
 }
 
@@ -155,7 +160,7 @@ export function schemaJsonError() {
   errorDiv.classList.add("alert");
   errorDiv.classList.add("alert-danger");
   errorDiv.innerHTML =
-    "<b>Error:</b> Incorrect JSON format.  Please consult instructions and try again";
+    "<b>Error:</b> Incorrect JSON format.  Please ensure correct format used.";
 }
 
 export async function uploadJsonSchema(schema) {
