@@ -237,3 +237,5 @@ api/al/model/training_data/*
 api/al/model/embeddings/*
 !api/al/model/embeddings
 !api/al/model/embeddings/.gitkeep
+
+.vscode
