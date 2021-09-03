@@ -33,7 +33,7 @@ function MainNavbar(props) {
   return (
     <Navbar expand="lg" bg="dark" variant="dark">
       <div className="container-fluid">
-        <Navbar.Brand href="/">Antelope Transcript Labelling</Navbar.Brand>
+        <Navbar.Brand href="/">Antelope: Transcript Labelling</Navbar.Brand>
         <Nav className="mr-auto">
           <Nav.Link className={pageStatus.transcripts} href="/">
             Transcripts

@@ -31,7 +31,7 @@ function LoginNavbar(props) {
       <div id="nav">
         <Navbar expand="lg" bg="dark" variant="dark">
           <div className="container-fluid">
-            <Navbar.Brand href="/">Transcript Labelling</Navbar.Brand>
+            <Navbar.Brand href="/">Antelope: Transcript Labelling</Navbar.Brand>
           </div>
           <Nav className="mr-auto">
             <Nav.Link
