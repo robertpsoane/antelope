@@ -4,6 +4,11 @@ import Form from "react-bootstrap/Form";
 import { handleLogin } from "../scripts/auth";
 
 function Login(props) {
+  /**
+   * Login page component
+   *
+   * Provides login form to allow user to login to the server.
+   */
   const [modalShow, setModalShow] = React.useState(false);
 
   function handleKeyPress(event) {

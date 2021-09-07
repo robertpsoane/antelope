@@ -6,6 +6,14 @@ import TranscriptAsTable from "../components/transcript_manager/TranscriptAsTabl
 import { homeRedirect } from "../scripts/redirects";
 
 function ViewTranscript(props) {
+  /**
+   * Page to view a transcript.
+   *
+   * The transcript is passed in as a property
+   * This is used to asynchronously request the transcript from the
+   * server.  The transcript is set as a dictionary in the components
+   * state, which is updated once the transcript has been loaded.
+   */
   const [transcript, setTranscript] = useState({});
   const t_id = props.transcript_id;
 

@@ -5,6 +5,13 @@ import PasswordReset from "../components/settings/PasswordReset";
 import { getLoginStatus } from "../scripts/auth";
 
 function UserSettings(props) {
+  /**
+   * User Settings Page component
+   *
+   * Asynchronously checks if admin.  If admin user, updates state
+   * to respect admin state and includes admin panel after the
+   * main settings
+   */
   const [showAdmin, setShowAdmin] = useState(false);
 
   async function checkShowAdmin() {

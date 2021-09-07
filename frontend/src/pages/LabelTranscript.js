@@ -8,6 +8,21 @@ import { Spinner } from "react-bootstrap";
 import TranscriptProcesssingCard from "../components/turn_labelling/TranscriptProcessingCard";
 
 function LabelTranscript(props) {
+  /**
+   * Transcript labelling system page
+   *
+   * Asynchronously fetches the next batch of the transcript, plus
+   * turns either side of it.
+   * These are then displayed on the screen beneath a card giving
+   * the transcript metadata.
+   *
+   * The user can press labels to apply to the turns, turn by turn.
+   * These are sent to the server at the end of the batch, and the
+   * next batch is received.
+   *
+   * If there is no next batch (ie the transcript is finished), then
+   * the user is redirected to view the transcript.
+   */
   const t_id = props.transcript_id;
   const [batch, setBatch] = useState({});
   const [turnNumber, setTurnNumber] = useState(null);

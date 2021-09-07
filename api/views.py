@@ -445,31 +445,34 @@ class LabellingSchemaInstanceEdit(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAdminUser]
 
 @require_http_methods(["POST"])
-@permission_classes([permissions.IsAdminUser])
 def post_model_config(request):
     """ post_model_config
     Updates the AL model config with the new config file from the user
     request
     """
+    if not (request.user.is_staff or request.user.is_superuser):
+         return HttpResponse(status=403)  
     new_config = json.loads(request.body)
     AL.model.config = new_config
     return JsonResponse({"success":True})
 
 @require_http_methods(["GET"])
-@permission_classes([permissions.IsAdminUser])
 def get_model_config(request):
     """ get_model_config
     Gets model config and sends as a JSON
     """
+    if not (request.user.is_staff or request.user.is_superuser):
+         return HttpResponse(status=403)  
     return JsonResponse(AL.model.config_options)
 
 @require_http_methods(["POST"])
-@permission_classes([permissions.IsAdminUser])
 def new_labelling_with_levels(request):
     """ new_labelling_with_levels 
     Adds a new labelling class, along with the corresponding levels from an
     api request
     """
+    if not (request.user.is_staff or request.user.is_superuser):
+         return HttpResponse(status=403)  
     # Extract request data
     data = json.loads(request.body)
     name = data["name"]
@@ -498,12 +501,13 @@ def new_labelling_with_levels(request):
     return JsonResponse(response)
 
 @require_http_methods(["PUT"])
-@permission_classes([permissions.IsAdminUser])
 def edit_labelling_with_levels(request):
     """ edit_labelling_with_levels
     Takes an API PUT request and updates any changes to labelling class and
     corresponding levels
     """
+    if not (request.user.is_staff or request.user.is_superuser):
+         return HttpResponse(status=403)  
     # Unpacking request
     data = json.loads(request.body)
     name = data["name"]

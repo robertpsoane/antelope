@@ -8,6 +8,12 @@ import TranscriptSearch from "../components/transcript_manager/TranscriptSearch"
 import { getTranscripts } from "../scripts/transcripts";
 
 function TranscriptManager(props) {
+  /**
+   * Transcript Manager Page
+   *
+   * Asynchronously gets list of transcripts.  Sets them to component
+   * state, and iterates over them adding them to a table.
+   */
   const [transcripts, setTranscripts] = useState([]);
 
   async function getSetTranscripts() {

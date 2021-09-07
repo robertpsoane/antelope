@@ -9,6 +9,13 @@ import SetupTrainingParams from "../components/setup/SetupTrainingParams";
 import { handleSave, getConfigOptions } from "../scripts/modelSettings";
 
 function Setup(props) {
+  /**
+   * Model Setup Page
+   *
+   * Gets all possible models and corresponding parameters from server.
+   * Generates a form to allow user to update model.
+   * This can then be sent to the server to update and retrain the model
+   */
   const [options, setOptions] = useState({});
 
   async function getSetOptions() {
