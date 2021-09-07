@@ -62,6 +62,10 @@ class ActiveLearningModel:
         self.get_n_new()
         
     def transform(self, text):
+        """
+        Transcforms text into an embedding using the built in embedding
+        model
+        """
         transformed_tensor = tf.constant([text])
         embedding_tensor = self.embedding_model(transformed_tensor)
         return embedding_tensor
@@ -103,6 +107,9 @@ class ActiveLearningModel:
         ).start()
 
     def save_training_data(self, new_training_data):
+        """
+        Updates training data with new training data
+        """
         training_data = self.training_data
         for td in new_training_data:
             class_out = td["class"]
@@ -166,10 +173,15 @@ class ActiveLearningModel:
         print(" >> New level model created")
         
 
-    ###############################################
-    # Getters and setters for data stored on disk #
-    ###############################################
+    #################################################################
+    # Getters and setters for data stored on disk                   #
+    # These each allow the code to access complex structures as if  #
+    # they were attributes of the object                            #
+    #################################################################
     def get_n_new(self):
+        """
+        Gets number of new datapoints since last save
+        """
         self.__n_new_samples = self.config["n_new"]
 
 
@@ -183,13 +195,23 @@ class ActiveLearningModel:
 
 
     def make_embeddings_model(self):
+        """
+        Compiles a new BERT model using the compile_bert script
+        """
         model = compile_bert()
         print(" >> Saving new embeddings model")
         model.save(EMBEDDING_MODEL_PATH, include_optimizer=False)
         self.embedding_model = model
         
-    
+    ### Setter and getter functions for the class and level models ###
     def load_class_model(self):
+        """
+        Loads the class model and stores it in self.__class_model.
+        
+        This is to be used on init to load model in the first instance.
+        The setter and getter decorated functions can then be used to
+        access and update the model.
+        """
         with open(CLASS_MODEL_PATH, "rb") as f:
             self.__class_model = pickle.load(f)
     
@@ -204,6 +226,13 @@ class ActiveLearningModel:
         self.__class_model = new_model
 
     def load_level_model(self):
+        """
+        Loads the class model and stores it in self.__level_model.
+        
+        This is to be used on init to load model in the first instance.
+        The setter and getter decorated functions can then be used to
+        access and update the model.
+        """
         with open(LEVEL_MODEL_PATH, "rb") as f:
             self.__level_model = pickle.load(f)
 

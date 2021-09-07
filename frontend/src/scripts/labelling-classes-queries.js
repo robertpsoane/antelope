@@ -26,10 +26,11 @@ export async function getAllClassAdmin() {
 export const POSSIBLE_LEVELS = [-3, -2, -1, 0, 1, 2, 3];
 
 export function getDataFromModalForm() {
-  /* 
-  Function to get all data from modal form for new/edit class.  Handles 
-  errors or returns json of data
-  */
+  /**
+   * Function to get all data from modal form for new/edit class.  Handles
+   * errors or returns json of data
+   */
+
   // Get values of form components
   const labellingName = document.getElementById("labellingName").value;
   const labellingDescription = document.getElementById(
@@ -68,6 +69,9 @@ export function getDataFromModalForm() {
 }
 
 export async function putUpdatedClass(data) {
+  /**
+   * PUT request to send edited class metadata to server
+   */
   const cookies = new Cookies();
 
   const response = await fetch("/api/labelling_schema_edit/", {
@@ -87,6 +91,9 @@ export async function putUpdatedClass(data) {
 }
 
 export async function postNewClass(data) {
+  /**
+   * Sends the new class data in a request to the server
+   */
   const cookies = new Cookies();
   const response = await fetch("/api/labelling_schema_new/", {
     method: "POST",
@@ -104,6 +111,10 @@ export async function postNewClass(data) {
 }
 
 export function postClassError(missing) {
+  /**
+   * Handles serverside validation error message from bad attempts
+   * to add new class
+   */
   const errorDiv = document.getElementById("error-div");
   errorDiv.classList.add("alert");
   errorDiv.classList.add("alert-danger");
@@ -111,6 +122,10 @@ export function postClassError(missing) {
 }
 
 export async function deleteClass(id) {
+  /**
+   * Request to delete class with given ID
+   */
+
   const url = "/api/labelling_schema_modify/" + id + "/";
   const cookies = new Cookies();
   const response = await fetch(url, {
@@ -125,6 +140,10 @@ export async function deleteClass(id) {
 }
 
 export function verifySchema(schema) {
+  /**
+   * Iterates over schema JSON upload and verifies schema
+   * matches criteria.
+   */
   var schemaIsVerified = true;
   try {
     //  If there are any errors in the forEach, the format is clearly wrong
@@ -156,14 +175,20 @@ export function verifySchema(schema) {
 }
 
 export function schemaJsonError() {
+  /**
+   * Shows error message if JSON format incorrect.
+   */
   const errorDiv = document.getElementById("error-div");
   errorDiv.classList.add("alert");
   errorDiv.classList.add("alert-danger");
   errorDiv.innerHTML =
-    "<b>Error:</b> Incorrect JSON format.  Please ensure correct format used.";
+    "<b>Error:</b> Incorrect JSON format.  Please refer to administrator guide for further instructions.";
 }
 
 export async function uploadJsonSchema(schema) {
+  /**
+   * Posts each class in the uploaded schema
+   */
   var response;
   for (const key in schema) {
     const data = schema[key];

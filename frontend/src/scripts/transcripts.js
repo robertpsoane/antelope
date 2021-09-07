@@ -1,6 +1,10 @@
 import Cookies from "universal-cookie";
 import download from "downloadjs";
+
 export async function postTranscript(data) {
+  /**
+   * Manages the posting of new transcript to the server
+   */
   const cookies = new Cookies();
   const response = await fetch("/api/new_transcript/", {
     method: "POST",
@@ -18,6 +22,9 @@ export async function postTranscript(data) {
 }
 
 export async function getTranscripts() {
+  /**
+   * Gets all transcripts owned by the logged in usr
+   */
   const transcripts = await fetch("/api/transcripts/").then((result) =>
     result.json()
   );
@@ -25,6 +32,9 @@ export async function getTranscripts() {
 }
 
 export async function getTranscriptByID(id) {
+  /**
+   * Gets the text of the id'd transcript, along with the metadata
+   */
   const url = "/api/transcripts/" + id + "/";
   const transcript = await fetch(url).then(async (result) => {
     const status = result.status;
@@ -36,6 +46,9 @@ export async function getTranscriptByID(id) {
 }
 
 function uploadError(missingField) {
+  /**
+   * Adds error message to the upload modal when there are missing fields.
+   */
   const errorDiv = document.getElementById("error-div");
   errorDiv.classList.add("alert");
   errorDiv.classList.add("alert-danger");
@@ -43,6 +56,11 @@ function uploadError(missingField) {
 }
 
 export async function uploadTranscript() {
+  /**
+   * Handles the upload of a transcript
+   * Extracts all data from the form and posts the transcript.
+   */
+
   const transcriptName = document.getElementById("transcriptName").value;
   const transcriptNotes = document.getElementById("transcriptNotes").value;
   const transcriptText = document.getElementById("transcriptTextData").value;
@@ -72,6 +90,9 @@ export async function uploadTranscript() {
 }
 
 export async function updateTranscriptMetadata() {
+  /**
+   * Gets all data from the metadata update form, and sends to server
+   */
   const transcriptName = document.getElementById("transcriptName").value;
   const transcriptNotes = document.getElementById("transcriptNotes").value;
 
@@ -107,6 +128,9 @@ export async function updateTranscriptMetadata() {
 }
 
 export async function deleteTranscript(transcript_id) {
+  /**
+   * Sends request to delete the transcript with the given id
+   */
   const url = "/api/transcripts/" + transcript_id + "/";
   const cookies = new Cookies();
   const response = await fetch(url, {
@@ -124,6 +148,9 @@ export async function deleteTranscript(transcript_id) {
 }
 
 export async function downloadTranscript(transcript_id) {
+  /**
+   * Requests the transcript as a CSV and saves to computer
+   */
   const url = "/api/download_transcript/" + transcript_id + "/";
   const cookies = new Cookies();
   const response = await fetch(url, {

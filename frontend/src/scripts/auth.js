@@ -4,6 +4,11 @@ import { loginRedirect, homeRedirect } from "./redirects";
 
 // Handles login attempt
 export async function handleLogin() {
+  /**
+   * Client side function to attempt login.
+   * Sends client username and password to server and if login
+   * successful redirects to home page.
+   */
   const cookies = new Cookies();
 
   const user = document.getElementById("formUser").value;
@@ -32,6 +37,9 @@ export async function handleLogin() {
 
 // Displays error message and clears password for login failed
 function loginFailed() {
+  /**
+   * Manages error messages if server rejects login.
+   */
   const errorDiv = document.getElementById("error-msg");
   errorDiv.classList.add("alert");
   errorDiv.classList.add("alert-danger");
@@ -41,11 +49,18 @@ function loginFailed() {
 
 // Handles logout
 export function handleLogout() {
+  /**
+   * Handles attempt to logout - calls the logout endpoint and redirects
+   * to login page.
+   */
   fetch("/api/auth_logout/");
   loginRedirect();
 }
 
 export async function getLoginStatus() {
+  /**
+   * Checks whether server has authenticated user.
+   */
   const response = await fetch("/api/auth_check/").then(
     // Converting AJAX response to json
     (response) => response.json()
@@ -55,6 +70,10 @@ export async function getLoginStatus() {
 
 // Change password
 export async function changePassword() {
+  /**
+   * Manages serverseide validation of change password attempt,
+   * then sends request to server to change password.
+   */
   const old = document.getElementById("oldPassword").value;
   const pass = document.getElementById("newPassword").value;
   const repeat = document.getElementById("repeatNewPassword").value;
@@ -72,6 +91,10 @@ export async function changePassword() {
 }
 
 async function sendChangePassword(old, newPassword) {
+  /**
+   * Function to put together http request to change password,
+   * sends new password and old password to server to attempt change
+   */
   const cookies = new Cookies();
   const response = await fetch("/api/change_pass/", {
     method: "POST",
@@ -95,6 +118,9 @@ function clearChangePasswordForm() {
 }
 
 function changePasswordError() {
+  /**
+   * Generate change password error message in the form.
+   */
   const errorDiv = document.getElementById("error-msg");
   errorDiv.classList.add("alert");
   errorDiv.classList.add("alert-danger");
@@ -104,6 +130,9 @@ function changePasswordError() {
 }
 
 function changePasswordSuccess() {
+  /**
+   * Alert user as to success of password change attempt
+   */
   const errorDiv = document.getElementById("error-msg");
   errorDiv.classList.add("alert");
   errorDiv.classList.add("alert-success");

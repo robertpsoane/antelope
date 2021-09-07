@@ -1,6 +1,10 @@
 import Cookies from "universal-cookie";
 
 export function handleSave(options) {
+  /**
+   * Gets parameters from model form and sends to the server to
+   * update model
+   */
   const new_config = {
     label_class: getModelParameters("Class", "class", options),
     label_levels: getModelParameters("Level", "levels", options),
@@ -16,6 +20,10 @@ export function handleSave(options) {
 }
 
 async function sendNewConfig(config) {
+  /**
+   * Called by handleSave to manage POST request to send new config file
+   * to the server
+   */
   const cookies = new Cookies();
 
   const response = await fetch("/api/new_model_config/", {
@@ -34,6 +42,9 @@ async function sendNewConfig(config) {
 }
 
 export async function getConfigOptions() {
+  /**
+   * Fetches the options for the model config from the servers
+   */
   const cookies = new Cookies();
   const response = await fetch("/api/get_model_config/", {
     method: "GET",
@@ -51,6 +62,9 @@ export async function getConfigOptions() {
 }
 
 function getModelParameters(upper, lower, options) {
+  /**
+   * Gets parameters from form and returns in a JSON
+   */
   const modelParams = {
     params: {},
   };

@@ -2,6 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.deletion import CASCADE
 
+"""
+Models - In this file the Models are defined.  They are effectively 
+object based tables of the relational database.
+"""
+
+
 # Create your models here.
 class Transcripts(models.Model):
     UserID = models.ForeignKey(User, on_delete=CASCADE, related_name="user_transcripts")

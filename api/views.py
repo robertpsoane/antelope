@@ -51,6 +51,11 @@ if EXPERIMENTAL:
 MODEL = ["model"]
     
 def random_predict(input):
+    """ random_predict(input)
+    Completely disregards the input and instead makes a random prediction
+    from the available schema. 
+    This is only needed for experimental mode.
+    """
     schema = labelling_schema_as_list()
     classes = list(schema.keys())
     class_val = random.choice(classes)
@@ -89,6 +94,10 @@ def append(path, text):
 # Login Views #
 ###############
 def user_login(request):
+    """ user_login(request)
+    Takes http request and if username and password are correct will
+    log user in.
+    """
     data = json.loads(request.body)
     username = data['username']
     password = data['password']
@@ -101,10 +110,16 @@ def user_login(request):
     return JsonResponse(out)
 
 def user_logout(request):
+    """ user_logout(request)
+    Logs user out using Django's logout function
+    """
     logout(request)
     return JsonResponse({"logout": True})
 
 def get_login_data(request):
+    """
+    Handles request to tell client if user is logged in.
+    """
     out = {
         "login": request.user.is_authenticated,
         "admin": request.user.is_staff
@@ -118,6 +133,10 @@ def get_login_data(request):
 ###################
 @require_http_methods(["POST"])
 def change_password(request):
+    """ change_password(request)
+    Handles POST request to change password.  If old password is correct,
+    sets new password and sends success status to client.
+    """
     # Extract request data
     data = json.loads(request.body)
     username = request.user.username
@@ -139,6 +158,11 @@ def change_password(request):
 ##############
 # User Views #
 ##############
+# The following classes use generic API Views from the Django REST
+# framework to `SELECT *` from the table
+#
+# In some cases these are modified to provide extra functionality.
+
 class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -165,6 +189,10 @@ class TranscriptInstanceView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwner]
 
     def get(self, request, *args, **kwargs):
+        """
+        Modified API view GET request - gets row from SQL table, then
+        loads transcript document and schema and adds to response.
+        """
         # Getting default response
         response = super().get(request, *args, **kwargs)
         transcript = loadTranscript(request, response, TRANSCRIPTS_LOCATION)
@@ -173,6 +201,11 @@ class TranscriptInstanceView(generics.RetrieveUpdateDestroyAPIView):
         return response
 
     def delete(self, request, *args, **kwargs):
+        """
+        Modified API view DELETE request - gets instance to delete, 
+        deletes all documents relating to that isntance, then deletes 
+        the instance.
+        """
         # Get location of documents
         instance = Transcripts.objects.get(pk=kwargs["pk"])
         transcript_location = instance.TranscriptLocation
@@ -192,10 +225,12 @@ class LabellingBatch(generics.RetrieveAPIView):
     permission_classes = [IsOwner]
 
     def get(self, request, *args, **kwargs):
-        # TODO - add:
-        # processed_location = os.path.join(transcript_dir, "process.json")
-        # - Add check if processed, incorporate pickled training data
-    
+        """
+        Modified generic for GET view
+        checks if function is processed - if processed, then fetches 
+        next batch of turns, and sends with predictions.
+        If not processed, tells teh front end
+        """    
         # Getting default response
         response = super().get(request, *args, **kwargs)
         processed = loadTranscriptProcessingStatus(request, response, TRANSCRIPTS_LOCATION)
@@ -249,6 +284,9 @@ class LabellingBatch(generics.RetrieveAPIView):
         return response
 
 def log_data(data):
+    """ log_data(data)
+    Adds key data to a log file for today
+    """
     today = date.today().strftime("%d-%m-%Y")
     if not os.path.isdir(LOGGING_LOCATION):
         # If no logging directory, make new directory
@@ -277,6 +315,10 @@ def log_data(data):
 @permission_classes([permissions.IsAuthenticated])
 @require_http_methods(["PUT"])
 def put_labelled_transcript(request):
+    """ put_labelled_transcript(request)
+    Updates transcript with new labels, and updates the record in
+    with next turn to label.
+    """
     data = json.loads(request.body)
     
     if LOGGING:
@@ -353,6 +395,9 @@ def labelling_schema_as_list():
 @permission_classes([permissions.IsAuthenticated])
 @require_http_methods(["PUT"])
 def update_transcript_metadata(request):
+    """ update_transcript_metadata(request)
+    PUT function to update transcript metadata via the serializer
+    """
     data = json.loads(request.body)
     validated_data = {
         "TranscriptName": data["transcript_name"],
@@ -366,6 +411,8 @@ def update_transcript_metadata(request):
 ################
 # Schema Views #
 ################
+# The following classes use generic API Views from the Django REST
+# framework to `SELECT *` from the table
 class LabellingSchemaInstanceView(generics.RetrieveAPIView):
     queryset = LabellingSchema.objects.all()
     serializer_class = LabellingSchemaSerializer
@@ -401,7 +448,8 @@ class LabellingSchemaInstanceEdit(generics.RetrieveUpdateDestroyAPIView):
 @permission_classes([permissions.IsAdminUser])
 def post_model_config(request):
     """ post_model_config
-    Gets new model config 
+    Updates the AL model config with the new config file from the user
+    request
     """
     new_config = json.loads(request.body)
     AL.model.config = new_config
@@ -411,7 +459,7 @@ def post_model_config(request):
 @permission_classes([permissions.IsAdminUser])
 def get_model_config(request):
     """ get_model_config
-    Gets model config
+    Gets model config and sends as a JSON
     """
     return JsonResponse(AL.model.config_options)
 
@@ -505,6 +553,11 @@ def edit_labelling_with_levels(request):
 # Process new transcript and add to database
 @permission_classes([permissions.IsAuthenticated])
 def new_transcript(request):
+    """
+    Manages upload of new transcript.  Stores transcript as a JSON
+    in the users document store, then adds a record for the transcript
+    in the SQL db
+    """
     data = json.loads(request.body)
     transcript_name = data["name"]
     transcript_notes = data["notes"]
@@ -557,6 +610,10 @@ def new_transcript(request):
     return JsonResponse({"received":True})
 
 def process_transcript(transcript_document, transcript_dir, processed_location):
+    """
+    Generates embeddings for the transcript and dumps them in same 
+    directory as the transcript in the document database.
+    """
     print(" >> Making transcript embeddings")
     t0 = time.time()
     embeddings = [
@@ -580,6 +637,10 @@ class TranscriptDownload(generics.RetrieveAPIView):
     permission_classes = [IsOwner]
     
     def get(self, request, *args, **kwargs):
+        """
+        Loads the transcript, and conversts it to a caret delimited csv 
+        which is sent back to the client in a JSON
+        """
         # Get transcript data
         response = super().get(request, *args, **kwargs)
 

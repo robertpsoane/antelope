@@ -21,6 +21,12 @@ import ViewTranscript from "./pages/ViewTranscript.js";
 import LabelTranscript from "./pages/LabelTranscript.js";
 import Setup from "./pages/Setup.js";
 
+/**
+ *
+ * App - Entry point to the main app.
+ *
+ */
+
 function App(props) {
   function getTranscriptID() {
     var out;
