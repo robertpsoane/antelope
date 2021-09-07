@@ -1,5 +1,5 @@
-INPUT_FILE_PATH = "film_1_carl_rogers_corrected.txt"
-OUTPUT_FILE_PATH = "film_1_carl_rogers_corrected.csv"
+INPUT_FILE_PATH = "film_1_carl_rogers.txt"
+OUTPUT_FILE_PATH = "film_1_carl_rogers.csv"
 
 HEADING = "Sep=^\nSpeaker^Turn^\n"
 csv = HEADING
