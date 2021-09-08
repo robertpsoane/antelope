@@ -22,3 +22,12 @@ For all instructions, see the following manuals:
 - The frontend can be found in `frontend`.
 - - The static built frontend can be found in `frontend > static`
 - - The frontend source code can be found in `frontend > src`
+
+# Sample Files
+A sample of the CICS schema as well as a template JSON is included in the `_sample_files` directory.
+
+The CICS scheme can be found here:
+
+Malins, S., Moghaddam, N., Morriss, R., Schroder, T., Cope, N., & Brown, P. (2018). Consultation Interaction Coding Scheme 1.6. Retrieved 7 Sep from https://figshare.com/articles/Consultation_Interaction_Coding_Scheme_CICS_/7302386
+
+
