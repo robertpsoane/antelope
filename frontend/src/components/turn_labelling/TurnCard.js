@@ -3,6 +3,11 @@ import { Card, Spinner } from "react-bootstrap";
 import LabelControls from "./LabelControls";
 
 function TurnCard(props) {
+  /**
+   * Turn Card
+   * Shows the current turn of the transcript and controls for the user
+   * to label the transcript.
+   */
   const turnNumber = props.turnNumber;
   if (
     turnNumber == null ||

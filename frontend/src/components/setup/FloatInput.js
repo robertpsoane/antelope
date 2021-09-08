@@ -1,6 +1,11 @@
 import React from "react";
 import { Form } from "react-bootstrap";
+
 function FloatInput(props) {
+  /**
+   * Float specific input for form in setup page.  Enforces upper and
+   * lower limits based on config options JSON
+   */
   const range = props.range;
   const param = props.param;
   const defaultVal = props.defaultVal;

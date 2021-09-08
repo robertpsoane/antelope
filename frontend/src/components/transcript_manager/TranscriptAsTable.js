@@ -3,6 +3,11 @@ import { Table } from "react-bootstrap";
 import TurnRow from "./TurnRow";
 
 function TranscriptAsTable(props) {
+  /**
+   * Component to dispaly entire transcript as a table.
+   * Iterates over the transcript data structure and adds each
+   * row as a row of the table
+   */
   const fullTranscript = { ...props.transcript };
   const turns = fullTranscript.Transcript;
 

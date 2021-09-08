@@ -8,26 +8,10 @@ import {
 } from "../../scripts/labelling-classes-queries";
 
 function UploadSchemaModal(props) {
+  /**
+   * Modal to upload entire schema to the system
+   */
   var { reloadCards, ...otherProps } = props;
-
-  const templateJson = {
-    schema: [
-      {
-        name: "Class One's name",
-        short: "C1N",
-        description:
-          "The name goes in the name field, an acronym of 3 letters in the acronym, and the description here.  Put the levels in the levels field as below.",
-        levels: [-1, 0, 1],
-      },
-      {
-        name: "Put as many as you like!",
-        short: "PAL",
-        description:
-          "Put as many of these structures as you like, one for each class",
-        levels: [-1, 0, 1],
-      },
-    ],
-  };
 
   function getFile() {
     // Function to process file and add text to a hidden input field
@@ -66,10 +50,10 @@ function UploadSchemaModal(props) {
       <Modal.Body>
         <div>
           Upload entire coding schema in a JSON file. Please upload the schema
-          in a <code>JSON</code> in the following format:
-          <pre>
-            <code>{JSON.stringify(templateJson, null, 2)}</code>
-          </pre>
+          in a <code>JSON</code> in the format given in the{" "}
+          <a href="https://github.com/robertpsoane/antelope/wiki/Administrator-Manual#schema-upload">
+            Administrator Manual
+          </a>
           Only allow levels between <code>-3</code> and <code>3</code>.
         </div>
 

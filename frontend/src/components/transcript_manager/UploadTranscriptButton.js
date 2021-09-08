@@ -5,6 +5,9 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import UploadTranscriptModal from "./UploadTranscriptModal";
 
 function UploadTranscriptButton(props) {
+  /**
+   * Button to control modal to upload a transcript.
+   */
   const [showUploadModal, setShowUploadModal] = useState(false);
 
   return (

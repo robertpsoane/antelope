@@ -1,6 +1,10 @@
 import React from "react";
 import { Form } from "react-bootstrap";
+
 function StringInput(props) {
+  /**
+   * Input field for string data type in model setup form
+   */
   return (
     <Form.Group
       controlId={props.id}

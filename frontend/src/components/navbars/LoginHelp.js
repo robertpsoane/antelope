@@ -7,6 +7,9 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
 function LoginHelp(props) {
+  /**
+   * Modal to provide help on the login page.
+   */
   return (
     <Modal
       {...props}

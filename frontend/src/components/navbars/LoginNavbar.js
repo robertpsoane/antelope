@@ -11,6 +11,11 @@ import { getLoginStatus } from "../../scripts/auth";
 import { homeRedirect } from "../../scripts/redirects";
 
 function LoginNavbar(props) {
+  /**
+   * Login Page special case of the Navbar
+   * - If authenticated by server, redirects to home page, else
+   * allow to login
+   */
   const [modalShow, setModalShow] = useState(false);
 
   async function processLoginStatus() {

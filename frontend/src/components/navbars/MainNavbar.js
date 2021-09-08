@@ -1,7 +1,3 @@
-/* 
-Main navbar for most pages - different to the login navbar used for 
-the login page
-*/
 import React from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
@@ -9,6 +5,12 @@ import { handleLogout, getLoginStatus } from "../../scripts/auth";
 import { loginRedirect } from "../../scripts/redirects";
 
 function MainNavbar(props) {
+  /**
+   * Main Navbar for all pages apart from login page
+   * - Checks if authenticated by server - if not authenticated, then
+   * redirects to login page.
+   * - Highlights teh "active" page
+   */
   const page = props.page;
 
   async function processLoginStatus() {

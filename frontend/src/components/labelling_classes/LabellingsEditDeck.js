@@ -4,6 +4,12 @@ import { getAllClassAdmin } from "../../scripts/labelling-classes-queries";
 import NewLabellingButton from "./NewLabellingButton";
 
 function LabellingsEditDeck(props) {
+  /**
+   * Labelling Edit Deck
+   *
+   * View the entire deck of labels, with capacity to add new labels
+   * and edit existing labels.
+   */
   const [cards, setCards] = useState([]);
 
   async function reloadNewCards() {

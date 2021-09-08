@@ -4,6 +4,10 @@ import SchemaModal from "./SchemaModal";
 import TitleCardFooter from "./TitleCardFooter";
 
 function TranscriptTitleCard(props) {
+  /**
+   * Title card for labelling transcript. Shows metadata,
+   * progress bars and an option to view the schema label.
+   */
   const [modalShow, setModalShow] = useState(false);
 
   const title = props.batch.TranscriptName;

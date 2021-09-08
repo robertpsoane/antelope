@@ -3,6 +3,9 @@ import { Modal, Button } from "react-bootstrap";
 import LabellingsViewDeck from "../labelling_classes/LabellingsViewDeck";
 
 function SchemaModal(props) {
+  /**
+   * Modal to show the labellings during labellnig.
+   */
   return (
     <Modal
       {...props}

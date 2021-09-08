@@ -4,6 +4,11 @@ import TranscriptProgressBar from "./TranscriptProgressBar";
 import TranscriptRowButton from "./TranscriptRowButton";
 
 function TranscriptRow(props) {
+  /**
+   * Component to show a transcripts name, description, time, progress
+   * and control buttons as a row of a table.  This is meant for the
+   * table of transcripts in the home page
+   */
   return (
     <tr>
       <td>{props.name}</td>

@@ -2,7 +2,13 @@ import React from "react";
 import { Card, Spinner } from "react-bootstrap";
 
 function TranscriptProcesssingCard(props) {
-  // Re-query for turns every 5 seconds
+  /**
+   * Card to tell user transcript is being processed.
+   *
+   * This is used when the transcript has just been uploaded and the
+   * embeddings haven't been generated yet.  It re-queries the server
+   * every 5 seconds to check if the transcript has been processed yet
+   */
 
   async function refresh() {
     const response = await props.getBatch();

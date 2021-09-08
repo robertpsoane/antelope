@@ -3,6 +3,12 @@ import { Card } from "react-bootstrap";
 import LabellingCardButtons from "./LabellingCardButtons";
 
 function LabellingCard(props) {
+  /**
+   * Card to display labelling class, and description in the view
+   * and edit transcript decks.
+   *
+   * If required, provides an edit button to load the edit modal
+   */
   return (
     <Card id={"card-" + props.id} className="m-3">
       <Card.Header>

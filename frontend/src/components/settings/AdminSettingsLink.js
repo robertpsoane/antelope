@@ -3,6 +3,11 @@ import Button from "react-bootstrap/Button";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 function AdminSettingsLink(props) {
+  /**
+   * Admin settings panel in Settings page.  Only available for admin users
+   * - Main settings page passes in props.show to tell whether or
+   * not admin user
+   */
   if (props.show) {
     return (
       <div>

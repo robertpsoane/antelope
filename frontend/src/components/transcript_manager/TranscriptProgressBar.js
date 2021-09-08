@@ -3,6 +3,12 @@ import { ProgressBar } from "react-bootstrap";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 function TranscriptProgressBar(props) {
+  /**
+   * Component which provides a progress bar showing transcript
+   * labelling progress
+   *
+   * Includes a tooltip to show the labelling progress numerically
+   */
   if (props.string.length > 0) {
     var string = props.string + " ";
   } else {

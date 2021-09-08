@@ -3,6 +3,10 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { uploadTranscript } from "../../scripts/transcripts.js";
 
 function UploadTranscriptModal(props) {
+  /**
+   * Modal with upload transcript form.  Gets uploaded csv and sends
+   * to server
+   */
   var { reloadTranscripts, ...otherProps } = props;
 
   async function handleKeyPress() {

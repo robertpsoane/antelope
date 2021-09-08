@@ -2,6 +2,10 @@ import React from "react";
 
 import FormInput from "./FormInput";
 function SetupTrainingParams(props) {
+  /**
+   * Form to setup training parameters (batch size, training rate etc)
+   * These parameters are also defined in the main config JSON
+   */
   const params = props.params;
   const current = props.current;
   const keyRoot = "training_params_";

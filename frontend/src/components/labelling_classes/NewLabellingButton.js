@@ -6,6 +6,9 @@ import NewLabellingModal from "./NewLabellingModal";
 import UploadSchemaModal from "./UploadSchemaModal";
 
 function NewLabellingButton(props) {
+  /**
+   * Button to bring up modals for New Class and Upload Schema
+   */
   const [newLabelModalShow, setNewLabelModalShow] = useState(false);
   const [uploadSchemaModalShow, setUploadSchemaModalShow] = useState(false);
 

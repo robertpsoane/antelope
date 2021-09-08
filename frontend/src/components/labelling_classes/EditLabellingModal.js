@@ -8,6 +8,10 @@ import {
 } from "../../scripts/labelling-classes-queries";
 
 function EditLabellingModal(props) {
+  /**
+   * Modal to edit the name, acronym, description and levels
+   * of a labelling class
+   */
   const [show, setShow] = useState(false);
   var {
     id,
@@ -83,6 +87,7 @@ function EditLabellingModal(props) {
           <Form.Group controlId="labellingLevels">
             {POSSIBLE_LEVELS.map((l, i) => {
               if (levels.includes(l)) {
+                // Iterating over labels and checking in form
                 return (
                   <Form.Check
                     key={"level" + l}

@@ -4,6 +4,10 @@ import { Pencil, XCircle } from "react-bootstrap-icons";
 import EditLabellingModal from "./EditLabellingModal";
 
 function LabellingCardButtons(props) {
+  /**
+   * Edit button to modify labelling class - brings up EditLabellingModal
+   * modal
+   */
   const [showEditModal, setShowEditModal] = useState(false);
 
   if (props.modify) {

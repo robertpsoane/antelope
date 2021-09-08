@@ -11,6 +11,9 @@ import MainNavbar from "./MainNavbar";
 import LoginNavbar from "./LoginNavbar";
 
 function Navbar(props) {
+  /**
+   * Router which loads Navbar correct to page.  Based on page path
+   */
   const page = props.page;
 
   return (

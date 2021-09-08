@@ -3,6 +3,11 @@ import LabellingCard from "./LabellingCard";
 import { getAllClass } from "../../scripts/labelling-classes-queries";
 
 function LabellingsViewDeck(props) {
+  /**
+   * Labelling View Deck
+   *
+   * Deck to view the labelling classes - no capacity to edit
+   */
   const [cards, setCards] = useState([]);
 
   async function getSetLabellings() {

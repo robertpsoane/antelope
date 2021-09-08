@@ -4,6 +4,9 @@ import { Form } from "react-bootstrap";
 import FormInput from "./FormInput";
 
 function ModelSetup(props) {
+  /**
+   * Component to create model setup forms based on input JSON
+   */
   const options = props.modelFor;
   const modelName = props.modelForName;
   const current = props.current;

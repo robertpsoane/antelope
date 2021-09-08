@@ -2,6 +2,11 @@ import React from "react";
 import { Form } from "react-bootstrap";
 
 function TranscriptSearch(props) {
+  /**
+   * Transcript search box.
+   * All transcripts metadata is shown - the search box simply filters
+   * by text matching in the name and description
+   */
   const transcripts = [...props.transcripts];
 
   function handleChange(x) {

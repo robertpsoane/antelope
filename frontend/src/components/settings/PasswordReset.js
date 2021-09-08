@@ -3,6 +3,11 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 function PasswordReset(props) {
+  /**
+   * Password reset form in the settings page
+   * Includes client side validation
+   *
+   */
   function handleKeyPress(event) {
     if (event.key === "Enter") {
       changePassword();

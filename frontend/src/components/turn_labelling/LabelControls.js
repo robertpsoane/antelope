@@ -4,6 +4,12 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { COLOURS } from "../../scripts/labelling";
 
 function LabelControls(props) {
+  /**
+   * Labelling buttons for the turn labelling card.  Iterates over the
+   * labelling classes and renders a button with dropdown for each
+   *
+   * Provides a button in bottom right showing the models suggestion.
+   */
   const schema = props.schema;
   const turn = props.turn;
   const prediction = turn.prediction;

@@ -8,6 +8,10 @@ import {
 } from "../../scripts/labelling-classes-queries";
 
 function NewLabellingModal(props) {
+  /**
+   * Modal to add new labelling classes to the deck
+   */
+
   const [show, setShow] = useState(false);
   var { reloadCards, ...otherProps } = props;
 

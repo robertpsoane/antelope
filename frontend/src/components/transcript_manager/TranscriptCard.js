@@ -10,6 +10,9 @@ import DeleteTranscriptModal from "./DeleteTranscriptModal";
 import TranscriptStats from "./TranscriptStats";
 
 function MetadataModal(props) {
+  /**
+   * Modal to provide form to edit transcript metadata
+   */
   var {
     transcriptId,
     TranscriptName,
@@ -79,6 +82,10 @@ function MetadataModal(props) {
 }
 
 function TranscriptCard(props) {
+  /**
+   * Card to show transcript metadata in the view transcript
+   * page
+   */
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 

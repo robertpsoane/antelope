@@ -3,7 +3,10 @@ import { Card } from "react-bootstrap";
 import { Pencil } from "react-bootstrap-icons";
 
 function AdjacentLabel(props) {
-  // AdjacentLabel - displays label on adjacent card if one exits
+  /**
+   * Card to show label (if it exists) on a transcript card other
+   * than that which is the transcript currently being labelled
+   */
   const label = props.label;
   const schema = props.schema;
   if (label == null) {
@@ -20,6 +23,12 @@ function AdjacentLabel(props) {
 }
 
 function AdjacentCard(props) {
+  /**
+   * Card to show the adjacent turn of a transcript (if one exists) to
+   * the current turn being labelled.  Used to show context to labeller
+   * such that they can see the turns either side of the turn they
+   * are labelling
+   */
   const turnNumber = props.turnNumber;
   const batch = props.batch;
   const schema = props.batch.schema;

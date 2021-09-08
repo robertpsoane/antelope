@@ -3,6 +3,13 @@ import React from "react";
 import { Card, ProgressBar } from "react-bootstrap";
 
 function TitleCardFooter(props) {
+  /**
+   * Footer of the title card when labelling.  Displays progress
+   * bars to show how far in labelling both the transcript
+   * and the current batch the labeller is.
+   *
+   * If batch size is 1, only shows progress in transcript.
+   */
   const currentTurn = props.turnNumber + 1;
   const nTurns = props.batch.NTurns;
   const batchStart = props.batch.start;

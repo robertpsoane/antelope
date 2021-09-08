@@ -4,6 +4,12 @@ import TranscriptProgressBar from "./TranscriptProgressBar";
 import { COLOURS } from "../../scripts/labelling";
 
 function TranscriptStats(props) {
+  /**
+   * Transcript Stats component
+   * Shows a summary of the transcript.  If not yet labelled, then just
+   * a progress bar of labelling progress
+   * If finished, provides a summary of how turns have been labelled.
+   */
   const transcript_meta = props.transcript;
   const transcript = transcript_meta.Transcript;
   const schema = transcript_meta.schema;

@@ -6,6 +6,17 @@ import DeleteTranscriptModal from "./DeleteTranscriptModal";
 import { downloadTranscript } from "../../scripts/transcripts";
 
 function TranscriptRowButton(props) {
+  /**
+   * Button Group of buttons to act on transcript in the transcript
+   * manager:
+   * - View
+   * - Edit
+   * - Download
+   * - Delete
+   *
+   * Effectively a set of links, each with tooltips to show what the
+   * icon is referring to
+   */
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const transcript_id = props.transcript_id;
